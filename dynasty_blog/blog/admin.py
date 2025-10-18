@@ -13,6 +13,8 @@ class PostAdmin(admin.ModelAdmin):
     raw_id_fields = ("author",)
     date_hierarchy = "published"
     ordering = ["status", "published"]
+    # Adding facet counts to filters
+    show_facets = admin.ShowFacets.ALWAYS
 
     def image_thumb(self, obj):
         if getattr(obj, "image", None):

@@ -4,8 +4,17 @@ from django.utils import timezone
 
 
 # Create your models here.
+# cCreating model managers
+class PublishedManager(models.Manager):
+    def get_queryset(self):
+        return super(super().get_queryset().filter(status=Post.Status.PUBLISHED))
+
+
 class Post(models.Model):
     # Adding a status field to indicate whether a blog post is a draft or published
+    objects = models.Manager()  # The default manager
+    published_posts = PublishedManager()  # Custom manager for published posts
+
     class Status(models.TextChoices):
         DRAFT = "DF", "Draft"
         PUBLISHED = "PB", "Published"
