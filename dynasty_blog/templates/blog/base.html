@@ -1,0 +1,26 @@
+#Creating a base template{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      {% block title %}
+      {% endblock %}
+    </title>
+    <link href="{% static 'css/blog.css' %}" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="content">
+      {% block content %}
+
+      {% endblock %}
+    </div>
+    <div id="sidebar">
+      <h2>The Ndikiye Family Blog</h2>
+      <p>Welcome to our family blog where we share our adventures, stories, and memories. Stay tuned for updates!</p>
+
+      <footer>
+        <p>&copy; 2025 The Ndikiye Family Blog. All rights reserved.</p>
+      </footer>
+    </div>
+  </body>
+</html>
