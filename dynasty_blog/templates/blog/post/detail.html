@@ -1,0 +1,14 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+  {{ post.title }}
+{% endblock %}
+
+{% block content %}
+  <h1>{{ post.title }}</h1>
+  <p class="date">Published {{ post.published }} by {{ post.author }}</p>
+  {% if post.image %}
+    <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width:100%;height:auto;" />
+  {% endif %}
+  {{ post.body|linebreaks }}
+{% endblock %}
