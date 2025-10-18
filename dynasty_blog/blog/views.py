@@ -4,7 +4,7 @@ from .models import Post
 
 # Create your views here.
 def post_list(request):
-    posts = Post.published.all()
+    posts = Post.objects.filter(status=Post.Status.PUBLISHED).order_by("-published")
     return render(request, "blog/post/list.html", {"posts": posts})
 
 
