@@ -18,8 +18,11 @@ class Post(models.Model):
         related_name="blog_posts",
     )
     body = models.TextField()
+    image = models.ImageField(
+        upload_to="blog_images/", blank=True, null=True
+    )  #  added field
     published = models.DateTimeField(default=timezone.now)
-    content = models.TextField()
+    # content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(
