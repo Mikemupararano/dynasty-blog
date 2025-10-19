@@ -9,11 +9,14 @@ def post_list(request):
 
 
 # Create a view to display a single post
-def post_detail(request, id):
+def post_detail(request, year, month, day, post):
     post = get_object_or_404(
         Post,
-        id=id,
         status=Post.Status.PUBLISHED,
+        slug=post,
+        published__year=year,
+        published__month=month,
+        published__day=day,
     )
 
     return render(request, "blog/post/detail.html", {"post": post})
