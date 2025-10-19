@@ -4,16 +4,16 @@ from django.urls import reverse
 from django.utils import timezone
 
 
-# Create your models here.
-# cCreating model managers
+# Custom manager that returns only published posts
 class PublishedManager(models.Manager):
     def get_queryset(self):
-        return super(super().get_queryset().filter(status=Post.Status.PUBLISHED))
+        # Call the parent queryset and then filter by published status
+        return super().get_queryset().filter(status=self.model.Status.PUBLISHED)
 
 
 class Post(models.Model):
-    # Adding a status field to indicate whether a blog post is a draft or published
-    objects = models.Manager()  # The default manager
+    # Managers
+    objects = models.Manager()  # Default manager
     published_posts = PublishedManager()  # Custom manager for published posts
 
     class Status(models.TextChoices):
@@ -28,11 +28,8 @@ class Post(models.Model):
         related_name="blog_posts",
     )
     body = models.TextField()
-    image = models.ImageField(
-        upload_to="blog_images/", blank=True, null=True
-    )  #  added field
+    image = models.ImageField(upload_to="blog_images/", blank=True, null=True)
     published = models.DateTimeField(default=timezone.now)
-    # content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(
@@ -41,10 +38,8 @@ class Post(models.Model):
         default=Status.DRAFT,
     )
 
-    # Present blogs in reverse chronological order, showing the most recent posts first
     class Meta:
         ordering = ["-published"]
-        # Adding an index on the published field to optimize queries that filter or sort by this field
         indexes = [
             models.Index(fields=["-published"]),
         ]
@@ -53,12 +48,13 @@ class Post(models.Model):
         return self.title
 
     def get_absolute_url(self):
+        # Use kwargs to avoid reliance on positional argument order
         return reverse(
             "blog:post_detail",
-            args=[
-                self.published.year,
-                self.published.month,
-                self.published.day,
-                self.slug,
-            ],
+            kwargs={
+                "year": self.published.year,
+                "month": self.published.month,
+                "day": self.published.day,
+                "post": self.slug,
+            },
         )

@@ -5,7 +5,7 @@ from .models import Post
 
 # Create your views here.
 def post_list(request):
-    posts_list = Post.published.all()
+    posts_list = Post.published_posts.all()
     paginator = Paginator(posts_list, 3)  # Show 3 posts per page
     page_number = request.GET.get("page", 1)
     posts = paginator.get_page(page_number)
