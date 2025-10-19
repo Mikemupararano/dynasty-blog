@@ -1,19 +1,14 @@
-{% comment %} #Creating pagination template {% endcomment %}
+{% comment %}Pagination controls{% endcomment %}
 <div class="pagination">
-    <span class ="step-links">
-    {% if page.has_previous %}
-        <a href="?page={{ page.previous_page_number }}">Previous</a>
+  <span class="step-links">
+    {% if posts.has_previous %}
+      <a href="?page={{ posts.previous_page_number }}">&laquo; Previous</a>
     {% endif %}
-    </span>
-    {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}">&laquo; Previous</a>
-    {% endif %}
-    <span class="current-page">
-        Page {{ page.number }} of {{ page.paginator.num_pages }}
-    </span>
 
-    {% if page.has_next %}
-        <a href="?page={{ page.next_page_number }}">Next &raquo;</a>
+    <span class="current-page">Page {{ posts.number }} of {{ posts.paginator.num_pages }}</span>
+
+    {% if posts.has_next %}
+      <a href="?page={{ posts.next_page_number }}">Next &raquo;</a>
     {% endif %}
-    </span>
+  </span>
 </div>
