@@ -1,9 +1,11 @@
-#Creating a base template{% load static %}
+{% comment %}#Creating a base template{% endcomment %}
+{% load static %}
 <!DOCTYPE html>
 <html>
   <head>
     <title>
       {% block title %}
+
       {% endblock %}
     </title>
     <link href="{% static 'css/blog.css' %}" rel="stylesheet" />
