@@ -9,7 +9,7 @@
 
   {% for post in posts %}
     <h2>
-      <a href="{% url 'blog:post_detail' post.id %}">{{ post.title }}</a>
+      <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
       <p>Published on {{ post.published_date }}</p>
     </h2>
     <p class="date">Published {{ post.published }} by {{ post.author }}</p>
