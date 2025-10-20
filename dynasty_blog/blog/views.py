@@ -1,4 +1,4 @@
-from django.core.paginator import Paginator
+from django.core.paginator import EmptyPage, Paginator
 from django.shortcuts import get_object_or_404, render
 from .models import Post
 
@@ -9,6 +9,13 @@ def post_list(request):
     paginator = Paginator(posts_list, 3)  # Show 3 posts per page
     page_number = request.GET.get("page", 1)
     posts = paginator.get_page(page_number)
+    # Handle empty pages
+    try:
+        posts = paginator.page(page_number)
+    except EmptyPage:
+        # If page is out of range, deliver last page of results.
+        posts = paginator.page(paginator.num_pages)
+
     return render(request, "blog/post/list.html", {"posts": posts})
 
 
