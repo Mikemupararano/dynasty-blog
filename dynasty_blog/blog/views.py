@@ -1,9 +1,22 @@
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import get_object_or_404, render
 from .models import Post
+from django.views.generic import ListView
 
 
 # Create your views here.
+# Create class-based view for listing posts
+class PostListView(ListView):
+    # Alternative post list view using class-based views
+    queryset = Post.published_posts.all()
+    context_object_name = "posts"
+    paginate_by = 3  # Show 3 posts per page
+    template_name = "blog/post/list.html"
+
+    def get_queryset(self):
+        return Post.published_posts.all()
+
+
 def post_list(request):
     posts_list = Post.published_posts.all()
     paginator = Paginator(posts_list, 3)  # Show 3 posts per page
