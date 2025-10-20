@@ -6,6 +6,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 import dj_database_url
+from decouple import config
 
 # ---------------------------------------------------------------------
 # Paths & environment
@@ -129,3 +130,11 @@ MEDIA_ROOT = BASE_DIR / "media"
 # Misc
 # ---------------------------------------------------------------------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Email settings (example using console backend for dev)
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
