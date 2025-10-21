@@ -8,6 +8,7 @@ from django.views.generic import ListView
 from django.views.decorators.http import require_POST
 from .forms import EmailPostForm, CommentForm
 from .models import Post, Comment
+from taggit.models import Tag
 
 
 def post_share(request, post_id):
@@ -72,13 +73,17 @@ class PostListView(ListView):
     #     return Post.published_posts.all()
 
 
-def post_list(request):
+def post_list(request, tag_slug=None):
     posts_list = Post.published_posts.all()
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        posts_list = posts_list.filter(tags__in=[tag])
     paginator = Paginator(posts_list, 3)
     page_number = request.GET.get("page", 1)
     # get_page() safely handles non-integer and out-of-range pages
     posts = paginator.get_page(page_number)
-    return render(request, "blog/post/list.html", {"posts": posts})
+    return render(request, "blog/post/list.html", {"posts": posts, "tag": tag})                                              })
 
 
 def post_detail(request, year, month, day, post):
