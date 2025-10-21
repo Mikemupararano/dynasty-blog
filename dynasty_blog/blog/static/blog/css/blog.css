@@ -95,3 +95,19 @@ input[type=submit] {
     font-size:12px;
     color:#666;
 }
+
+.share-form {
+  max-width: 400px;
+  margin-top: 1em;
+}
+.share-form button {
+  padding: 0.4em 1em;
+  background-color: #2b6cb0;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.share-form button:hover {
+  background-color: #2c5282;
+}

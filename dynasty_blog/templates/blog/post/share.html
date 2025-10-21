@@ -1,0 +1,39 @@
+{% extends "blog/base.html" %}
+{% load static %}
+
+{% block title %}Share “{{ post.title }}”{% endblock %}
+
+{% block content %}
+  <h1>Share “{{ post.title }}”</h1>
+
+  {# Show Django success/error messages if any #}
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {# Display confirmation if sent, otherwise show form #}
+  {% if sent %}
+    <div class="alert alert-success" style="margin-top: 1em;">
+      <strong>Email sent successfully!</strong>
+    </div>
+    <p>
+      The post <strong>“{{ post.title }}”</strong> was shared successfully.
+    </p>
+    <p>
+      <a href="{{ post.get_absolute_url }}">← Back to post</a>
+    </p>
+  {% else %}
+    <p>
+      Enter your name, email, and a message to share this post via email.
+    </p>
+    <form method="post" class="share-form">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Send Email</button>
+    </form>
+  {% endif %}
+{% endblock %}
