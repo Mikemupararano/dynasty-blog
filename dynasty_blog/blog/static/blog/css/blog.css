@@ -111,3 +111,24 @@ input[type=submit] {
 .share-form button:hover {
   background-color: #2c5282;
 }
+/* --- small polish additions --- */
+body {
+  line-height: 1.6;
+  color: #333;
+}
+
+#content, #sidebar {
+  /* give cards a bit of breathing room */
+  margin-top: 20px;
+}
+
+.clearfix { clear: both; }
+
+/* make images inside posts scale nicely */
+#content img { max-width: 100%; height: auto; display: block; }
+
+/* optional: make the sidebar text a touch softer */
+#sidebar p { color: #555; }
+
+/* optional: constrain overall width and center the layout */
+.wrapper { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
