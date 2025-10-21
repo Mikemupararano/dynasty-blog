@@ -1,26 +1,61 @@
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.shortcuts import get_object_or_404, render
-from .models import Post
+from django.conf import settings
+from django.contrib import messages
+from django.core.mail import EmailMessage, send_mail
+from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.generic import ListView
+
 from .forms import EmailPostForm
+from .models import Post
 
 
-# Create your views here.
 def post_share(request, post_id):
-    # Retrieve post by id
     post = get_object_or_404(Post, id=post_id, status=Post.Status.PUBLISHED)
     sent = False
 
     if request.method == "POST":
-        # Form was submitted
         form = EmailPostForm(request.POST)
         if form.is_valid():
-            # Form fields passed validation
             cd = form.cleaned_data
-            # ... send email
-            sent = True
+            post_url = request.build_absolute_uri(post.get_absolute_url())
+            subject = f"{cd['name']} ({cd['email']}) recommends you read {post.title}"
+            message = (
+                f"Read “{post.title}” at {post_url}\n\n"
+                f"{cd['name']}'s comments:\n{cd['comments']}"
+            )
+
+            try:
+                # Option A: simple plaintext
+                send_mail(
+                    subject=subject,
+                    message=message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,  # or None to use default
+                    recipient_list=[cd["to"]],
+                    fail_silently=False,
+                )
+
+                # Option B: richer control (reply-to)
+                # email = EmailMessage(
+                #     subject=subject,
+                #     body=message,
+                #     from_email=settings.DEFAULT_FROM_EMAIL,
+                #     to=[cd["to"]],
+                #     reply_to=[cd["email"]],  # so recipient can reply to the recommender
+                # )
+                # email.send(fail_silently=False)
+
+                messages.success(request, "Email sent successfully.")
+                sent = True
+                # PRG: redirect to avoid resubmission on refresh
+                return redirect(reverse("blog:post_share", args=[post.id]) + "?sent=1")
+            except Exception as e:
+                messages.error(request, f"Could not send email: {e}")
     else:
         form = EmailPostForm()
+        if request.GET.get("sent"):
+            sent = True
+
     return render(
         request,
         "blog/post/share.html",
@@ -28,37 +63,24 @@ def post_share(request, post_id):
     )
 
 
-# Create class-based view for listing posts
 class PostListView(ListView):
-    # Alternative post list view using class-based views
     queryset = Post.published_posts.all()
     context_object_name = "posts"
-    paginate_by = 3  # Show 3 posts per page
+    paginate_by = 3
     template_name = "blog/post/list.html"
-
-    def get_queryset(self):
-        return Post.published_posts.all()
+    # def get_queryset(self):  # not needed because queryset is already set
+    #     return Post.published_posts.all()
 
 
 def post_list(request):
     posts_list = Post.published_posts.all()
-    paginator = Paginator(posts_list, 3)  # Show 3 posts per page
+    paginator = Paginator(posts_list, 3)
     page_number = request.GET.get("page", 1)
+    # get_page() safely handles non-integer and out-of-range pages
     posts = paginator.get_page(page_number)
-    # Handle empty pages
-    try:
-        posts = paginator.page(page_number)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        posts = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range, deliver last page of results.
-        posts = paginator.page(paginator.num_pages)
-
     return render(request, "blog/post/list.html", {"posts": posts})
 
 
-# Create a view to display a single post
 def post_detail(request, year, month, day, post):
     post = get_object_or_404(
         Post,
@@ -68,5 +90,4 @@ def post_detail(request, year, month, day, post):
         published__month=month,
         published__day=day,
     )
-
     return render(request, "blog/post/detail.html", {"post": post})
