@@ -5,7 +5,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import ListView
-
+from django.views.decorators.http import require_POST
 from .forms import EmailPostForm
 from .models import Post
 
@@ -91,3 +91,31 @@ def post_detail(request, year, month, day, post):
         published__day=day,
     )
     return render(request, "blog/post/detail.html", {"post": post})
+
+@require_POST
+def post_comment(request, post_id):
+    post = get_object_or_404(
+        Post,
+        id=post_id,
+        status=Post.Status.PUBLISHED
+        )
+    comment = None
+    # A comment was posted
+    form = CommentForm(data=request.POST)
+    if form.is_valid():
+        # Create a comment object but don't save to database yet
+        comment = form.save(commit=False)
+        # Assign the current post to the comment
+        comment.post = post
+        # Save the comment to the database
+        comment.save()
+    return render(
+        request,
+        "blog/post/comment.html",
+        {
+        {"post": post,
+         "form": form, 
+         "comment": comment
+         }
+    )
+  
