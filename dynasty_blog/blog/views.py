@@ -83,7 +83,7 @@ def post_list(request, tag_slug=None):
     page_number = request.GET.get("page", 1)
     # get_page() safely handles non-integer and out-of-range pages
     posts = paginator.get_page(page_number)
-    return render(request, "blog/post/list.html", {"posts": posts, "tag": tag})                                              })
+    return render(request, "blog/post/list.html", {"posts": posts, "tag": tag})
 
 
 def post_detail(request, year, month, day, post):
