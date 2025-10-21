@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from taggit.managers import TaggableManager
 
 
 # Custom manager that returns only published posts
@@ -12,6 +13,7 @@ class PublishedManager(models.Manager):
 
 
 class Post(models.Model):
+    tags = TaggableManager()  # Taggable manager for handling tags
     # Managers
     objects = models.Manager()  # Default manager
     published_posts = PublishedManager()  # Custom manager for published posts
