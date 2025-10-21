@@ -6,20 +6,22 @@
 
 {% block content %}
   <h1>Pfungwe's Lost Dynasty Blog</h1>
+
   {% if tag %}
     <h2>Posts tagged with "{{ tag.name }}"</h2>
   {% endif %}
 
   {% for post in posts %}
     <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
+
     <p class="tags">
-      Tags:
-      {% for tag in post.tags.all %}
-        <a href="{% url 'blog:post_list_by_tag' tag.slug %}">
-          {{ tag.name }}
-        </a>{% if not forloop.last %}, {% endif %}
+      Tags:{% for tag in post.tags.all %}
+        <a href="{% url 'blog:post_list_by_tag' tag.slug %}">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+      {% empty %}
+        <span>No tags</span>
       {% endfor %}
-      {{ post.tags.all|join:', ' }}</p>
+    </p>
+
     <p class="date">Published {{ post.published|date:'F j, Y' }} by {{ post.author }}</p>
 
     {% if post.image %}
@@ -27,8 +29,10 @@
     {% endif %}
 
     {{ post.body|truncatewords:30|linebreaks }}
+  {% empty %}
+    <p>No posts found.</p>
   {% endfor %}
 
-  {# ✅ Pass posts=page_obj so pagination works #}
-  {% include 'pagination.html' with posts=page_obj %}
+  {# ✅ Correctly link pagination to the same posts object #}
+  {% include 'pagination.html' with posts=posts %}
 {% endblock %}

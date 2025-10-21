@@ -6,9 +6,11 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import ListView
 from django.views.decorators.http import require_POST
+from django.db.models import Count
+from taggit.models import Tag
+
 from .forms import EmailPostForm, CommentForm
 from .models import Post, Comment
-from taggit.models import Tag
 
 
 def post_share(request, post_id):
@@ -27,28 +29,16 @@ def post_share(request, post_id):
             )
 
             try:
-                # Option A: simple plaintext
                 send_mail(
                     subject=subject,
                     message=message,
-                    from_email=settings.DEFAULT_FROM_EMAIL,  # or None to use default
+                    from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[cd["to"]],
                     fail_silently=False,
                 )
-
-                # Option B: richer control (reply-to)
-                # email = EmailMessage(
-                #     subject=subject,
-                #     body=message,
-                #     from_email=settings.DEFAULT_FROM_EMAIL,
-                #     to=[cd["to"]],
-                #     reply_to=[cd["email"]],  # so recipient can reply to the recommender
-                # )
-                # email.send(fail_silently=False)
-
                 messages.success(request, "Email sent successfully.")
                 sent = True
-                # PRG: redirect to avoid resubmission on refresh
+                # PRG pattern to prevent form resubmission
                 return redirect(reverse("blog:post_share", args=[post.id]) + "?sent=1")
             except Exception as e:
                 messages.error(request, f"Could not send email: {e}")
@@ -69,8 +59,6 @@ class PostListView(ListView):
     context_object_name = "posts"
     paginate_by = 3
     template_name = "blog/post/list.html"
-    # def get_queryset(self):  # not needed because queryset is already set
-    #     return Post.published_posts.all()
 
 
 def post_list(request, tag_slug=None):
@@ -81,7 +69,6 @@ def post_list(request, tag_slug=None):
         posts_list = posts_list.filter(tags__in=[tag])
     paginator = Paginator(posts_list, 3)
     page_number = request.GET.get("page", 1)
-    # get_page() safely handles non-integer and out-of-range pages
     posts = paginator.get_page(page_number)
     return render(request, "blog/post/list.html", {"posts": posts, "tag": tag})
 
@@ -95,18 +82,25 @@ def post_detail(request, year, month, day, post):
         published__month=month,
         published__day=day,
     )
+
     # List of active comments for this post
     comments = post.comments.filter(active=True)
+
     # Form for users to add comments
     form = CommentForm()
+
     # List of similar posts
-    post_tags_ids = post.tags.values_list("id", flat=True)
-    similar_posts = Post.published_posts.filter(tags__in=post_tags_ids).exclude(
-        id=post.id
-    )
-    similar_posts = similar_posts.annotate(same_tags=models.Count("tags")).order_by(
-        "-same_tags", "-published"
-    )[:4]
+    post_tag_ids = list(post.tags.values_list("id", flat=True))
+    if post_tag_ids:
+        similar_posts = (
+            Post.published_posts.filter(tags__in=post_tag_ids)
+            .exclude(id=post.id)
+            .annotate(same_tags=Count("tags", distinct=True))
+            .order_by("-same_tags", "-published")
+            .distinct()
+        )[:4]
+    else:
+        similar_posts = []
 
     return render(
         request,
@@ -124,15 +118,14 @@ def post_detail(request, year, month, day, post):
 def post_comment(request, post_id):
     post = get_object_or_404(Post, id=post_id, status=Post.Status.PUBLISHED)
     comment = None
-    # A comment was posted
     form = CommentForm(data=request.POST)
     if form.is_valid():
-        # Create a comment object but don't save to database yet
         comment = form.save(commit=False)
-        # Assign the current post to the comment
         comment.post = post
-        # Save the comment to the database
         comment.save()
+        messages.success(request, "Your comment has been submitted successfully.")
+    else:
+        messages.error(request, "Please correct the errors below.")
     return render(
         request,
         "blog/post/comment.html",
