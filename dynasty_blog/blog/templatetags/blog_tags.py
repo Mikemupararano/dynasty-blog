@@ -11,9 +11,9 @@ def total_posts():
     return Post.published_posts.count()
 
 
-# Creating an inclusion template tag
 @register.inclusion_tag("blog/post/latest_posts.html")
 def show_latest_posts(count=5):
     """Returns the latest published blog posts."""
-    latest_posts = Post.published_posts.order_by("-publish")[:count]
+
+    latest_posts = Post.published_posts.order_by("-published")[:count]
     return {"latest_posts": latest_posts}

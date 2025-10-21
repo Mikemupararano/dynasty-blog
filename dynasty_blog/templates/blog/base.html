@@ -6,6 +6,7 @@
   <head>
     <title>
       {% block title %}
+
       {% endblock %}
     </title>
     <link rel="stylesheet" href="{% static 'blog/css/blog.css' %}" />
@@ -13,6 +14,7 @@
   <body>
     <div id="content">
       {% block content %}
+
       {% endblock %}
     </div>
 
@@ -23,6 +25,8 @@
         Welcome to our family blog where we share our adventures, stories, and memories. Stay tuned for updates! I’ve written <strong>{{ total }}</strong>
         post{{ total|pluralize }} so far.
       </p>
+      <h3>Latest posts</h3>
+      {% show_latest_posts 3 %}
 
       <footer>
         <p>&copy; 2025 The Ndikiye Family Blog. All rights reserved.</p>
