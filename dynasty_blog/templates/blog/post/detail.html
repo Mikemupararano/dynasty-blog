@@ -7,11 +7,32 @@
 {% block content %}
   <h1>{{ post.title }}</h1>
   <p class="date">Published {{ post.published }} by {{ post.author }}</p>
+
   {% if post.image %}
     <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width:100%;height:auto;" />
   {% endif %}
+
   {{ post.body|linebreaks }}
+
   <p>
     <a href="{% url 'blog:post_share' post.id %}">Share this post</a>
   </p>
+
+  {% with total_comments=comments.count %}
+    <h2>{{ total_comments }} comment{{ total_comments|pluralize }}</h2>
+  {% endwith %}
+
+  {% for comment in comments %}
+    <div class="comment">
+      <p class="info">Comment {{ forloop.counter }} by {{ comment.name }} {{ comment.created }}</p>
+      <p>{{ comment.body|linebreaks }}</p>
+    </div>
+  {% empty %}
+    <p>There are no comments.</p>
+  {% endfor %}
+
+  <hr />
+
+  {# Include the form INSIDE the block and pass the vars explicitly #}
+  {% include 'blog/post/includes/comment_form.html' with post=post form=form %}
 {% endblock %}

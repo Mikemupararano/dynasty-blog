@@ -8,12 +8,16 @@
   <h1>Pfungwe's Lost Dynasty Blog</h1>
 
   {% for post in posts %}
-    <h2>
-      <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-      <p>Published on {{ post.published_date }}</p>
-    </h2>
-    <p class="date">Published {{ post.published }} by {{ post.author }}</p>
+    <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
+    <p class="date">Published {{ post.published|date:'F j, Y' }} by {{ post.author }}</p>
+
+    {% if post.image %}
+      <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width:100%;height:auto;" />
+    {% endif %}
+
     {{ post.body|truncatewords:30|linebreaks }}
   {% endfor %}
-  {% include 'pagination.html' with page=page_obj %}
+
+  {# ✅ Pass posts=page_obj so pagination works #}
+  {% include 'pagination.html' with posts=page_obj %}
 {% endblock %}
