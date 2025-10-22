@@ -1,4 +1,5 @@
 {% extends 'blog/base.html' %}
+{% load 'blog_tags' %}
 
 {% block title %}
   {{ post.title }}
@@ -12,7 +13,7 @@
     <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width:100%;height:auto;" />
   {% endif %}
 
-  {{ post.body|linebreaks }}
+  {{ post.body|markkdown }}
 
   <p>
     <a href="{% url 'blog:post_share' post.id %}">Share this post</a>

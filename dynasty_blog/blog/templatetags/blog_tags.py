@@ -2,6 +2,8 @@
 from django import template
 from blog.models import Post
 from django.db.models import Count
+import markdown
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
@@ -27,3 +29,9 @@ def get_most_commented_posts(count=5):
     return Post.published_posts.annotate(total_comments=Count("comments")).order_by(
         "-total_comments"
     )[:count]
+
+
+@register.filter(name="markdown")
+def markdown_format(text):
+    """Converts Markdown text to HTML."""
+    return mark_safe(markdown.markdown(text))
