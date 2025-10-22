@@ -9,15 +9,9 @@ from django.views.decorators.http import require_POST
 from django.db.models import Count
 from django.db import connection
 from taggit.models import Tag
+
+# Postgres full-text search bits (ok to import; only used when connection is PostgreSQL)
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
-
-# PostgreSQL full-text search (only if Postgres is available)
-try:
-    from django.contrib.postgres.search import SearchVector
-
-    HAS_POSTGRES = True
-except Exception:
-    HAS_POSTGRES = False
 
 from .forms import EmailPostForm, CommentForm, SearchForm
 from .models import Post, Comment
@@ -37,7 +31,6 @@ def post_share(request, post_id):
                 f"Read “{post.title}” at {post_url}\n\n"
                 f"{cd['name']}'s comments:\n{cd['comments']}"
             )
-
             try:
                 send_mail(
                     subject=subject,
@@ -93,13 +86,13 @@ def post_detail(request, year, month, day, post):
         published__day=day,
     )
 
-    # List of active comments for this post
+    # Active comments
     comments = post.comments.filter(active=True)
 
-    # Form for users to add comments
+    # Comment form
     form = CommentForm()
 
-    # List of similar posts
+    # Similar posts by shared tags
     post_tag_ids = list(post.tags.values_list("id", flat=True))
     if post_tag_ids:
         similar_posts = (
@@ -152,19 +145,24 @@ def post_search(request):
         form = SearchForm(request.GET)
         if form.is_valid():
             query = form.cleaned_data["query"]
-            search_vector = SearchVector("title", "body")
-            search_query = SearchQuery(query)
 
-            if HAS_POSTGRES and connection.vendor == "postgresql":
-                # Use full-text search
-                results = Post.published_posts.annotate(
-                    search=search_vector,
-                    rank=SearchRank(search_vector, search_query)
-                ).filter(search=search_query)
-                .order_by("-rank")
+            # Use Postgres full-text search if the current DB is PostgreSQL
+            if connection.vendor == "postgresql":
+                search_vector = SearchVector("title", "body")
+                search_query = SearchQuery(query)
+                results = (
+                    Post.published_posts.annotate(
+                        search=search_vector,
+                        rank=SearchRank(search_vector, search_query),
+                    )
+                    .filter(search=search_query)
+                    .order_by("-rank", "-published")
+                )
             else:
-                # Simple fallback search (SQLite or MySQL)
-                results = Post.published_posts.filter(title__icontains=query)
+                # Fallback: simple case-insensitive substring search
+                results = Post.published_posts.filter(
+                    title__icontains=query
+                ) | Post.published_posts.filter(body__icontains=query)
 
     return render(
         request,
