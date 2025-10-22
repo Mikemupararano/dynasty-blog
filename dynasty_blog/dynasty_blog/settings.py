@@ -3,37 +3,39 @@ Django settings for dynasty_blog project.
 """
 
 from pathlib import Path
-from dotenv import load_dotenv
-import os
+from decouple import AutoConfig, Csv
 import dj_database_url
-from decouple import config, Csv
 
 # ---------------------------------------------------------------------
 # Paths & environment
 # ---------------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / ".env")  # Load environment variables from .env
+
+# Make decouple read .env placed next to manage.py (BASE_DIR/.env)
+config = AutoConfig(search_path=BASE_DIR)
 
 # ---------------------------------------------------------------------
 # Security & core config
 # ---------------------------------------------------------------------
-SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key")
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+SECRET_KEY = config("SECRET_KEY", default="fallback-secret-key")
+DEBUG = config("DEBUG", cast=bool, default=False)
 
 # Comma-separated list in .env, e.g. "127.0.0.1,localhost"
 ALLOWED_HOSTS = [
     h.strip()
-    for h in os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+    for h in config("ALLOWED_HOSTS", default="127.0.0.1,localhost").split(",")
     if h.strip()
 ]
 
 # For deployments behind a proxy/HTTPS (optional: set USE_X_FORWARDED_PROTO=1 in .env)
-if os.getenv("USE_X_FORWARDED_PROTO") == "1":
+if config("USE_X_FORWARDED_PROTO", default="0") == "1":
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # CSRF trusted origins for prod, e.g. "https://your-app.onrender.com,https://www.yourdomain.com"
 CSRF_TRUSTED_ORIGINS = [
-    o.strip() for o in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()
+    o.strip()
+    for o in config("CSRF_TRUSTED_ORIGINS", default="").split(",")
+    if o.strip()
 ]
 
 # ---------------------------------------------------------------------
@@ -85,16 +87,27 @@ WSGI_APPLICATION = "dynasty_blog.wsgi.application"
 # ---------------------------------------------------------------------
 # Database
 # ---------------------------------------------------------------------
-# Uses DATABASE_URL from .env, falling back to SQLite in the project root.
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST"),
+        "NAME": config("DB_NAME", default="blog"),
+        "USER": config("DB_USER", default="blog"),
+        "PASSWORD": config("DB_PASSWORD", default=""),
+        "HOST": config("DB_HOST", default="localhost"),
+        "PORT": config("DB_PORT", default="5432"),
+        "OPTIONS": {
+            "connect_timeout": 5,  # <--- Added timeout for smoother errors
+        },
     }
 }
+
+DATABASE_URL = config("DATABASE_URL", default=None)
+if DATABASE_URL:
+    DATABASES["default"] = dj_database_url.parse(
+        DATABASE_URL,
+        conn_max_age=config("DB_CONN_MAX_AGE", cast=int, default=600),
+        ssl_require=config("DB_SSL_REQUIRE", cast=bool, default=False),
+    )
 
 # ---------------------------------------------------------------------
 # Password validation
@@ -119,36 +132,24 @@ USE_TZ = True
 # ---------------------------------------------------------------------
 # Static & media files
 # ---------------------------------------------------------------------
-# Always include the leading/trailing slashes for URL prefixes.
-STATIC_URL = os.getenv("STATIC_URL", "/static/")
-MEDIA_URL = os.getenv("MEDIA_URL", "/media/")
+STATIC_URL = config("STATIC_URL", default="/static/")
+MEDIA_URL = config("MEDIA_URL", default="/media/")
 
-# Where collectstatic puts files in prod (e.g., on Render/Railway/Heroku)
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
-# Optional: additional static dirs during development
-# Create a /static folder at the project root if you want to use this.
 STATICFILES_DIRS = [p for p in [BASE_DIR / "static"] if p.exists()]
 
-# Uploaded media files
 MEDIA_ROOT = BASE_DIR / "media"
 
 # ---------------------------------------------------------------------
-# Misc
+# Email
 # ---------------------------------------------------------------------
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# Email settings (example using console backend for dev)
 EMAIL_BACKEND = config(
     "EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend"
 )
-
 EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")
 EMAIL_PORT = config("EMAIL_PORT", cast=int, default=587)
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool, default=True)
-EMAIL_USE_SSL = config(
-    "EMAIL_USE_SSL", cast=bool, default=False
-)  # keep False if using TLS
+EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool, default=False)
 
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
@@ -157,9 +158,8 @@ DEFAULT_FROM_EMAIL = config(
     "DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER or "webmaster@localhost"
 )
 SERVER_EMAIL = config("SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
-# EMAIL_HOST = "smtp.gmail.com"
-# EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-# EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
+
+# ---------------------------------------------------------------------
+# Misc
+# ---------------------------------------------------------------------
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

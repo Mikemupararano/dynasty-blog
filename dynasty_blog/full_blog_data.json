@@ -1,0 +1,539 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$lEr35F0hD3cD1i1fHVJHoj$Y7lMVFpU3/MD8tYTTmfwXV/evn0DXOd/rFl/DlGwvqk=",
+      "last_login": "2025-10-20T19:21:23.725Z",
+      "is_superuser": true,
+      "username": "mthomas",
+      "first_name": "",
+      "last_name": "",
+      "email": "kudath@yahoo.co.uk",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2025-10-18T13:12:00.270Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "sessions.session",
+    "pk": "2g8ifzrqf0uq1dr8ol4h7blje16dizpu",
+    "fields": {
+      "session_data": ".eJxVjMsKwyAQAP9lz0V0xVeOvfcbZNVNTVsUYnIq_fcSyKG9zgzzhkj7VuM-eI1LgQkUXH5ZovzkdojyoHbvIve2rUsSRyJOO8StF35dz_ZvUGlUmIAR54zaWHbS4KzIScZiSfsUknfBE1tprCnSkw4YlDHkmFRgVklqD58v0Qg3Rg:1vAvRb:lhsRD0Sksu0Gha_TruCsPtTCVVtSwZGyK6Vebm3oYYE",
+      "expire_date": "2025-11-03T19:21:23.736Z"
+    }
+  },
+  {
+    "model": "sites.site",
+    "pk": 1,
+    "fields": {
+      "domain": "localhost:8000",
+      "name": "localhost:8000"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 1,
+    "fields": {
+      "name": "Gumambabvu",
+      "slug": "gumambabvu"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 2,
+    "fields": {
+      "name": "Nyauyanga",
+      "slug": "nyauyanga"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 3,
+    "fields": {
+      "name": "Mutepaire",
+      "slug": "mutepaire"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 4,
+    "fields": {
+      "name": "family history",
+      "slug": "family-history"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 5,
+    "fields": {
+      "name": "ancestry",
+      "slug": "ancestry"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 6,
+    "fields": {
+      "name": "relationships",
+      "slug": "relationships"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 7,
+    "fields": {
+      "name": "Pfungwe Dynasty",
+      "slug": "pfungwe-dynasty"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 8,
+    "fields": {
+      "name": "genealogy",
+      "slug": "genealogy"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 9,
+    "fields": {
+      "name": "Zimbabwe",
+      "slug": "zimbabwe"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 10,
+    "fields": {
+      "name": "Thomas",
+      "slug": "thomas"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 11,
+    "fields": {
+      "name": "Magohoto",
+      "slug": "magohoto"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 12,
+    "fields": {
+      "name": "dynasty blog",
+      "slug": "dynasty-blog"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 13,
+    "fields": {
+      "name": "Magohoto and Thomas",
+      "slug": "magohoto-and-thomas"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 14,
+    "fields": {
+      "name": "Ganha",
+      "slug": "ganha"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 15,
+    "fields": {
+      "name": "family conflict",
+      "slug": "family-conflict"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 16,
+    "fields": {
+      "name": "Kwinini",
+      "slug": "kwinini"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 17,
+    "fields": {
+      "name": "tradition",
+      "slug": "tradition"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 18,
+    "fields": {
+      "name": "ceremony",
+      "slug": "ceremony"
+    }
+  },
+  {
+    "model": "taggit.tag",
+    "pk": 19,
+    "fields": {
+      "name": "markdown",
+      "slug": "markdown"
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 1,
+    "fields": {
+      "tag": 1,
+      "content_type": 7,
+      "object_id": 6
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 2,
+    "fields": {
+      "tag": 2,
+      "content_type": 7,
+      "object_id": 6
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 3,
+    "fields": {
+      "tag": 3,
+      "content_type": 7,
+      "object_id": 6
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 4,
+    "fields": {
+      "tag": 4,
+      "content_type": 7,
+      "object_id": 5
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 5,
+    "fields": {
+      "tag": 5,
+      "content_type": 7,
+      "object_id": 5
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 6,
+    "fields": {
+      "tag": 6,
+      "content_type": 7,
+      "object_id": 5
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 7,
+    "fields": {
+      "tag": 7,
+      "content_type": 7,
+      "object_id": 5
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 8,
+    "fields": {
+      "tag": 8,
+      "content_type": 7,
+      "object_id": 5
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 9,
+    "fields": {
+      "tag": 9,
+      "content_type": 7,
+      "object_id": 5
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 10,
+    "fields": {
+      "tag": 10,
+      "content_type": 7,
+      "object_id": 5
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 11,
+    "fields": {
+      "tag": 11,
+      "content_type": 7,
+      "object_id": 5
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 12,
+    "fields": {
+      "tag": 12,
+      "content_type": 7,
+      "object_id": 5
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 13,
+    "fields": {
+      "tag": 13,
+      "content_type": 7,
+      "object_id": 5
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 14,
+    "fields": {
+      "tag": 2,
+      "content_type": 7,
+      "object_id": 4
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 15,
+    "fields": {
+      "tag": 5,
+      "content_type": 7,
+      "object_id": 4
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 16,
+    "fields": {
+      "tag": 7,
+      "content_type": 7,
+      "object_id": 4
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 17,
+    "fields": {
+      "tag": 10,
+      "content_type": 7,
+      "object_id": 4
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 18,
+    "fields": {
+      "tag": 14,
+      "content_type": 7,
+      "object_id": 4
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 19,
+    "fields": {
+      "tag": 15,
+      "content_type": 7,
+      "object_id": 4
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 20,
+    "fields": {
+      "tag": 16,
+      "content_type": 7,
+      "object_id": 4
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 21,
+    "fields": {
+      "tag": 17,
+      "content_type": 7,
+      "object_id": 4
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 22,
+    "fields": {
+      "tag": 18,
+      "content_type": 7,
+      "object_id": 4
+    }
+  },
+  {
+    "model": "taggit.taggeditem",
+    "pk": 23,
+    "fields": {
+      "tag": 19,
+      "content_type": 7,
+      "object_id": 7
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 1,
+    "fields": {
+      "title": "Who was Thomas",
+      "slug": "who-was-thomas",
+      "author": 1,
+      "body": "Thomas was born Feremenga, but changed his first name to Thomas when he worked for a white family.",
+      "image": "blog_images/lion.jpg",
+      "published": "2025-10-18T13:17:07Z",
+      "created_at": "2025-10-18T13:20:14.684Z",
+      "updated_at": "2025-10-18T13:42:26.520Z",
+      "status": "PB"
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 2,
+    "fields": {
+      "title": "About Nyauyanga",
+      "slug": "about-nyauyanga",
+      "author": 1,
+      "body": "Nyauyanga had three wives. His first wife was the mother of Thomas, the second was the mother of Mavhoko, and his youngest wife was Kwinini�s mother. Each wife had her own hut within Nyauyanga�s large homestead, and together they formed an extended family that reflected his status in the community.\r\n\r\nAs one of the most senior figures in Pfungwe, Nyauyanga was well respected by those around him. He oversaw many workers who lived and worked within his compound, tending to the fields, livestock, and household needs. His home was always busy � filled with the sounds of children, animals, and the steady rhythm of daily life.\r\n\r\nAmong the many people who frequented Nyauyanga�s homestead, his closest companion was Gumbamuto � a tall, brown-skinned man known for his strength and loyalty. The two were inseparable, often seen discussing village matters or sharing laughter under the shade of an old musasa tree.",
+      "image": "",
+      "published": "2025-10-19T18:51:05Z",
+      "created_at": "2025-10-19T18:56:39.043Z",
+      "updated_at": "2025-10-19T21:07:49.318Z",
+      "status": "PB"
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 3,
+    "fields": {
+      "title": "Mavhoko",
+      "slug": "mavhoko",
+      "author": 1,
+      "body": "Mavhoko was one of Thomas' cousin brothers. He never married and preferred to cook for himself than live with a woman.",
+      "image": "",
+      "published": "2025-10-19T21:01:34Z",
+      "created_at": "2025-10-19T21:03:24.138Z",
+      "updated_at": "2025-10-19T21:03:24.138Z",
+      "status": "PB"
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 4,
+    "fields": {
+      "title": "Kwinini and Thomas",
+      "slug": "kwinini-and-thomas",
+      "author": 1,
+      "body": "Kwinini was Thomas� cousin brother. The two had grown up together and shared a close bond throughout their early years. They worked side by side in the fields, attended family gatherings together, and often stood by each other in moments of difficulty. Their friendship was well known within the family, and many admired the unity between them.\r\n\r\nHowever, their relationship changed dramatically one fateful day when Kwinini decided to host a ceremony known as kutamba guva raNyauyanga � a traditional ritual held to honor the spirit of their late ancestor, Nyauyanga. Thomas was invited to attend and arrived with his eldest son, Ganha (also known as Henure), who by then was a respected elder and skilled drummer.\r\n\r\nAs the ceremony began, Ganha took his place among the drummers, beating the sacred rhythms that called upon the ancestral spirits. But tragedy struck suddenly � in the middle of the celebration, Ganha suffered a cardiac arrest and collapsed. Despite the grief and shock that swept through the gathering, tradition required that the ceremony continue, to avoid angering the ancestral spirits.\r\n\r\nThis decision deeply angered Thomas. He felt the family had disrespected his son�s death, and he blamed Kwinini for insisting that the ritual proceed. In the years that followed, the two men never reconciled. The warmth and brotherhood that once united them turned into silence and bitterness, lasting until both Thomas and Kwinini passed away in their old age. Thomas went to his grave believing that Kwinini had bewitched his beloved son, Ganha.",
+      "image": "",
+      "published": "2025-10-19T21:09:04Z",
+      "created_at": "2025-10-19T21:15:06.473Z",
+      "updated_at": "2025-10-21T20:21:51.795Z",
+      "status": "PB"
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 5,
+    "fields": {
+      "title": "Magohoto",
+      "slug": "magohoto",
+      "author": 1,
+      "body": "No one has ever explained how Thomas was related to Magohoto. Todays' blog will try and describe the relationship be tween Magohoto and Thomas.",
+      "image": "",
+      "published": "2025-10-21T18:10:31Z",
+      "created_at": "2025-10-21T18:12:45.406Z",
+      "updated_at": "2025-10-21T20:20:11.126Z",
+      "status": "PB"
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 6,
+    "fields": {
+      "title": "About Gumambabvu",
+      "slug": "about-gumambabvu",
+      "author": 1,
+      "body": "Gumambabvu was Nyauyanga's best friend. He was very tall, strong and with brown skin. He had diasagreements with Mutepaire.",
+      "image": "",
+      "published": "2025-10-21T18:18:00Z",
+      "created_at": "2025-10-21T18:19:43.461Z",
+      "updated_at": "2025-10-21T20:04:21.666Z",
+      "status": "PB"
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 7,
+    "fields": {
+      "title": "Markdown post",
+      "slug": "markdown-post",
+      "author": 1,
+      "body": "This is a post formatted with markdown.\r\n---------------------------------------------\r\n\r\n*This is emphasized* and **this is more emphasized**.\r\nHere is a list:\r\n\r\n*  One\r\n*  Two\r\n*  Three\r\n\r\n\r\nAnd a [link to the Django website](https://www.djangoproject.com/).",
+      "image": "",
+      "published": "2025-10-22T12:28:51Z",
+      "created_at": "2025-10-22T12:36:03.119Z",
+      "updated_at": "2025-10-22T13:13:13.326Z",
+      "status": "PB"
+    }
+  },
+  {
+    "model": "blog.comment",
+    "pk": 1,
+    "fields": {
+      "post": 1,
+      "name": "Mike Thomas",
+      "email": "kudath@yahoo.co.uk",
+      "body": "How tall was Thomas?",
+      "created": "2025-10-21T13:47:07.748Z",
+      "updated": "2025-10-21T13:47:07.748Z",
+      "active": true
+    }
+  },
+  {
+    "model": "blog.comment",
+    "pk": 2,
+    "fields": {
+      "post": 4,
+      "name": "Mike Thomas",
+      "email": "kudath@yahoo.co.uk",
+      "body": "Who was Kwinini?",
+      "created": "2025-10-21T18:07:10.013Z",
+      "updated": "2025-10-21T18:07:10.013Z",
+      "active": true
+    }
+  },
+  {
+    "model": "blog.comment",
+    "pk": 3,
+    "fields": {
+      "post": 3,
+      "name": "Mike Thomas",
+      "email": "kudath@yahoo.co.uk",
+      "body": "How was Thomas related to Mavhoko?",
+      "created": "2025-10-21T18:09:50.075Z",
+      "updated": "2025-10-21T18:09:50.075Z",
+      "active": true
+    }
+  }
+]
