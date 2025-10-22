@@ -5,23 +5,25 @@ from django.utils import timezone
 from taggit.managers import TaggableManager
 
 
-# Custom manager that returns only published posts
+# ---------------------------------------------------------------------
+# Custom Manager for Published Posts
+# ---------------------------------------------------------------------
 class PublishedManager(models.Manager):
+    """Custom manager that returns only posts with Published status."""
+
     def get_queryset(self):
-        # Call the parent queryset and then filter by published status
         return super().get_queryset().filter(status=self.model.Status.PUBLISHED)
 
 
+# ---------------------------------------------------------------------
+# Post Model
+# ---------------------------------------------------------------------
 class Post(models.Model):
-    tags = TaggableManager()  # Taggable manager for handling tags
-    # Managers
-    objects = models.Manager()  # Default manager
-    published_posts = PublishedManager()  # Custom manager for published posts
-
     class Status(models.TextChoices):
         DRAFT = "DF", "Draft"
         PUBLISHED = "PB", "Published"
 
+    # Core fields
     title = models.CharField(max_length=250)
     slug = models.SlugField(max_length=250, unique_for_date="published")
     author = models.ForeignKey(
@@ -31,26 +33,39 @@ class Post(models.Model):
     )
     body = models.TextField()
     image = models.ImageField(upload_to="blog_images/", blank=True, null=True)
+
+    # Date fields
     published = models.DateTimeField(default=timezone.now)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # Status field
     status = models.CharField(
         max_length=2,
         choices=Status.choices,
         default=Status.DRAFT,
     )
 
+    # Managers
+    objects = models.Manager()  # Default manager
+    published_posts = PublishedManager()  # Custom manager for published posts
+
+    # Tags
+    tags = TaggableManager()
+
     class Meta:
         ordering = ["-published"]
         indexes = [
             models.Index(fields=["-published"]),
         ]
+        verbose_name = "Post"
+        verbose_name_plural = "Posts"
 
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
-        # Use kwargs to avoid reliance on positional argument order
+        """Return canonical URL for a post."""
         return reverse(
             "blog:post_detail",
             kwargs={
@@ -62,6 +77,9 @@ class Post(models.Model):
         )
 
 
+# ---------------------------------------------------------------------
+# Comment Model
+# ---------------------------------------------------------------------
 class Comment(models.Model):
     post = models.ForeignKey(
         Post,
@@ -80,6 +98,8 @@ class Comment(models.Model):
         indexes = [
             models.Index(fields=["created"]),
         ]
+        verbose_name = "Comment"
+        verbose_name_plural = "Comments"
 
     def __str__(self):
         return f"Comment by {self.name} on {self.post}"

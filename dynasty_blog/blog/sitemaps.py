@@ -1,6 +1,7 @@
 from django.contrib.sitemaps import Sitemap
 from .models import Post
 
+
 class PostSitemap(Sitemap):
     changefreq = "weekly"
     priority = 0.9
@@ -9,6 +10,4 @@ class PostSitemap(Sitemap):
         return Post.published_posts.all()
 
     def lastmod(self, obj):
-        return obj.updated
-    
-    
+        return obj.updated_at  # ✅ use the correct field name

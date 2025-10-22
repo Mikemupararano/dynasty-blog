@@ -23,16 +23,18 @@ from django.conf.urls.static import static
 from blog.sitemaps import PostSitemap
 
 sitemaps = {
-    'posts': PostSitemap,
+    "posts": PostSitemap,
 }
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include(("blog.urls", "blog"), namespace="blog")),  # blog at root
-    path("sitemap.xml",
+    path(
+        "sitemap.xml",
         sitemap,
-        sitemaps": sitemaps},
-        name="django.contrib.sitemaps.views.sitemap")
+        {"sitemaps": sitemaps},
+        name="django.contrib.sitemaps.views.sitemap",
+    ),
 ]
 
 if settings.DEBUG:
