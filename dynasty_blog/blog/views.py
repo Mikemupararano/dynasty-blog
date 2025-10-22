@@ -1,14 +1,24 @@
 from django.conf import settings
 from django.contrib import messages
-from django.core.mail import EmailMessage, send_mail
+from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import ListView
 from django.views.decorators.http import require_POST
 from django.db.models import Count
+from django.db import connection
 from taggit.models import Tag
-from django.contrib.postgres.search import SearchVector
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+
+# PostgreSQL full-text search (only if Postgres is available)
+try:
+    from django.contrib.postgres.search import SearchVector
+
+    HAS_POSTGRES = True
+except Exception:
+    HAS_POSTGRES = False
+
 from .forms import EmailPostForm, CommentForm, SearchForm
 from .models import Post, Comment
 
@@ -97,8 +107,8 @@ def post_detail(request, year, month, day, post):
             .exclude(id=post.id)
             .annotate(same_tags=Count("tags", distinct=True))
             .order_by("-same_tags", "-published")
-            .distinct()
-        )[:4]
+            .distinct()[:4]
+        )
     else:
         similar_posts = []
 
@@ -132,20 +142,32 @@ def post_comment(request, post_id):
         {"post": post, "form": form, "comment": comment},
     )
 
+
 def post_search(request):
     form = SearchForm()
     query = None
     results = []
-    if 'query' in request.GET:
+
+    if "query" in request.GET:
         form = SearchForm(request.GET)
         if form.is_valid():
-            query = form.cleaned_data['query']
-            results = (
-                Post.published_posts.annotate(
-                search=SearchVector('title', 'body'),
-            ).filter(search=query)
+            query = form.cleaned_data["query"]
+            search_vector = SearchVector("title", "body")
+            search_query = SearchQuery(query)
+
+            if HAS_POSTGRES and connection.vendor == "postgresql":
+                # Use full-text search
+                results = Post.published_posts.annotate(
+                    search=search_vector,
+                    rank=SearchRank(search_vector, search_query)
+                ).filter(search=search_query)
+                .order_by("-rank")
+            else:
+                # Simple fallback search (SQLite or MySQL)
+                results = Post.published_posts.filter(title__icontains=query)
+
     return render(
         request,
-        'blog/post/search.html',
-        {'form': form, 'query': query, 'results': results}
+        "blog/post/search.html",
+        {"form": form, "query": query, "results": results},
     )
