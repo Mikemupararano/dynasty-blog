@@ -25,6 +25,10 @@
         Welcome to our family blog where we share our adventures, stories, and memories. Stay tuned for updates! I’ve written <strong>{{ total }}</strong>
         post{{ total|pluralize }} so far.
       </p>
+      <p>
+        <a href="{% url 'blog:post_feed' %}">Subscribe to our RSS feed</a>
+      </p>
+
       <h3>Latest posts</h3>
       {% show_latest_posts 3 %}
       <h3>Most commented posts</h3>
