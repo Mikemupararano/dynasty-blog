@@ -87,10 +87,13 @@ WSGI_APPLICATION = "dynasty_blog.wsgi.application"
 # ---------------------------------------------------------------------
 # Uses DATABASE_URL from .env, falling back to SQLite in the project root.
 DATABASES = {
-    "default": dj_database_url.config(
-        default=os.getenv("DATABASE_URL", f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
-        conn_max_age=600,  # good default for pooled connections in prod
-    )
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config("DB_NAME"),
+        "USER": config("DB_USER"),
+        "PASSWORD": config("DB_PASSWORD"),
+        "HOST": config("DB_HOST"),
+    }
 }
 
 # ---------------------------------------------------------------------
