@@ -148,14 +148,16 @@ def post_search(request):
 
             # Use Postgres full-text search if the current DB is PostgreSQL
             if connection.vendor == "postgresql":
-                search_vector = SearchVector("title", "body")
+                search_vector = SearchVector(
+                    "title", "weight ="A"
+                    ) + SearchVector("body", weight="B")
                 search_query = SearchQuery(query)
                 results = (
                     Post.published_posts.annotate(
                         search=search_vector,
                         rank=SearchRank(search_vector, search_query),
                     )
-                    .filter(search=search_query)
+                    .filter(rank__gte=0.3)
                     .order_by("-rank", "-published")
                 )
             else:
