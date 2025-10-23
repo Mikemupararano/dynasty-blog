@@ -4,6 +4,7 @@ Django settings for dynasty_blog project.
 
 from pathlib import Path
 from decouple import AutoConfig
+from django.core.management.utils import get_random_secret_key
 import dj_database_url
 
 # ---------------------------------------------------------------------
@@ -17,7 +18,9 @@ config = AutoConfig(search_path=BASE_DIR)
 # ---------------------------------------------------------------------
 # Security & core config
 # ---------------------------------------------------------------------
-SECRET_KEY = config("SECRET_KEY", default="fallback-secret-key")
+# Automatically generate a temporary key if .env SECRET_KEY is missing (for dev only)
+SECRET_KEY = config("SECRET_KEY", default=get_random_secret_key())
+
 DEBUG = config("DEBUG", cast=bool, default=False)
 
 # Comma-separated list in .env, e.g. "127.0.0.1,localhost"
@@ -31,12 +34,14 @@ ALLOWED_HOSTS = [
 if config("USE_X_FORWARDED_PROTO", default="0") == "1":
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# CSRF trusted origins for prod, e.g. "https://your-app.onrender.com,https://www.yourdomain.com"
+# CSRF trusted origins for production
 CSRF_TRUSTED_ORIGINS = [
     o.strip()
     for o in config("CSRF_TRUSTED_ORIGINS", default="").split(",")
     if o.strip()
 ]
+
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 # ---------------------------------------------------------------------
 # Applications
@@ -88,7 +93,7 @@ WSGI_APPLICATION = "dynasty_blog.wsgi.application"
 # ---------------------------------------------------------------------
 # Database (PostgreSQL only)
 # ---------------------------------------------------------------------
-# Prefer DATABASE_URL if provided (e.g., for production/hosting).
+# Prefer DATABASE_URL if provided (for production/hosting)
 DATABASE_URL = config("DATABASE_URL", default=None)
 
 if DATABASE_URL:
@@ -100,7 +105,7 @@ if DATABASE_URL:
         )
     }
 else:
-    # Otherwise build from discrete DB_* env vars.
+    # Otherwise build from discrete DB_* env vars
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
