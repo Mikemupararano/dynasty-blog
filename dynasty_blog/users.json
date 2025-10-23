@@ -1,0 +1,19 @@
+[
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$lEr35F0hD3cD1i1fHVJHoj$Y7lMVFpU3/MD8tYTTmfwXV/evn0DXOd/rFl/DlGwvqk=",
+    "last_login": "2025-10-20T19:21:23.725Z",
+    "is_superuser": true,
+    "username": "mthomas",
+    "first_name": "",
+    "last_name": "",
+    "email": "kudath@yahoo.co.uk",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-10-18T13:12:00.270Z",
+    "groups": [],
+    "user_permissions": []
+  }
+}
+]

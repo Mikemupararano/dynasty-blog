@@ -1,0 +1,160 @@
+[
+{
+  "model": "blog.post",
+  "pk": 1,
+  "fields": {
+    "title": "Who was Thomas",
+    "slug": "who-was-thomas",
+    "author": [
+      "mthomas"
+    ],
+    "body": "Thomas was born Feremenga, but changed his first name to Thomas when he worked for a white family.",
+    "image": "blog_images/lion.jpg",
+    "published": "2025-10-18T13:17:07Z",
+    "created_at": "2025-10-18T13:20:14.684Z",
+    "updated_at": "2025-10-18T13:42:26.520Z",
+    "status": "PB"
+  }
+},
+{
+  "model": "blog.post",
+  "pk": 2,
+  "fields": {
+    "title": "About Nyauyanga",
+    "slug": "about-nyauyanga",
+    "author": [
+      "mthomas"
+    ],
+    "body": "Nyauyanga had three wives. His first wife was the mother of Thomas, the second was the mother of Mavhoko, and his youngest wife was Kwinini’s mother. Each wife had her own hut within Nyauyanga’s large homestead, and together they formed an extended family that reflected his status in the community.\r\n\r\nAs one of the most senior figures in Pfungwe, Nyauyanga was well respected by those around him. He oversaw many workers who lived and worked within his compound, tending to the fields, livestock, and household needs. His home was always busy — filled with the sounds of children, animals, and the steady rhythm of daily life.\r\n\r\nAmong the many people who frequented Nyauyanga’s homestead, his closest companion was Gumbamuto — a tall, brown-skinned man known for his strength and loyalty. The two were inseparable, often seen discussing village matters or sharing laughter under the shade of an old musasa tree.",
+    "image": "",
+    "published": "2025-10-19T18:51:05Z",
+    "created_at": "2025-10-19T18:56:39.043Z",
+    "updated_at": "2025-10-19T21:07:49.318Z",
+    "status": "PB"
+  }
+},
+{
+  "model": "blog.post",
+  "pk": 3,
+  "fields": {
+    "title": "Mavhoko",
+    "slug": "mavhoko",
+    "author": [
+      "mthomas"
+    ],
+    "body": "Mavhoko was one of Thomas' cousin brothers. He never married and preferred to cook for himself than live with a woman.",
+    "image": "",
+    "published": "2025-10-19T21:01:34Z",
+    "created_at": "2025-10-19T21:03:24.138Z",
+    "updated_at": "2025-10-19T21:03:24.138Z",
+    "status": "PB"
+  }
+},
+{
+  "model": "blog.post",
+  "pk": 4,
+  "fields": {
+    "title": "Kwinini and Thomas",
+    "slug": "kwinini-and-thomas",
+    "author": [
+      "mthomas"
+    ],
+    "body": "Kwinini was Thomas’ cousin brother. The two had grown up together and shared a close bond throughout their early years. They worked side by side in the fields, attended family gatherings together, and often stood by each other in moments of difficulty. Their friendship was well known within the family, and many admired the unity between them.\r\n\r\nHowever, their relationship changed dramatically one fateful day when Kwinini decided to host a ceremony known as kutamba guva raNyauyanga — a traditional ritual held to honor the spirit of their late ancestor, Nyauyanga. Thomas was invited to attend and arrived with his eldest son, Ganha (also known as Henure), who by then was a respected elder and skilled drummer.\r\n\r\nAs the ceremony began, Ganha took his place among the drummers, beating the sacred rhythms that called upon the ancestral spirits. But tragedy struck suddenly — in the middle of the celebration, Ganha suffered a cardiac arrest and collapsed. Despite the grief and shock that swept through the gathering, tradition required that the ceremony continue, to avoid angering the ancestral spirits.\r\n\r\nThis decision deeply angered Thomas. He felt the family had disrespected his son’s death, and he blamed Kwinini for insisting that the ritual proceed. In the years that followed, the two men never reconciled. The warmth and brotherhood that once united them turned into silence and bitterness, lasting until both Thomas and Kwinini passed away in their old age. Thomas went to his grave believing that Kwinini had bewitched his beloved son, Ganha.",
+    "image": "",
+    "published": "2025-10-19T21:09:04Z",
+    "created_at": "2025-10-19T21:15:06.473Z",
+    "updated_at": "2025-10-21T20:21:51.795Z",
+    "status": "PB"
+  }
+},
+{
+  "model": "blog.post",
+  "pk": 5,
+  "fields": {
+    "title": "Magohoto",
+    "slug": "magohoto",
+    "author": [
+      "mthomas"
+    ],
+    "body": "No one has ever explained how Thomas was related to Magohoto. Todays' blog will try and describe the relationship be tween Magohoto and Thomas.",
+    "image": "",
+    "published": "2025-10-21T18:10:31Z",
+    "created_at": "2025-10-21T18:12:45.406Z",
+    "updated_at": "2025-10-21T20:20:11.126Z",
+    "status": "PB"
+  }
+},
+{
+  "model": "blog.post",
+  "pk": 6,
+  "fields": {
+    "title": "About Gumambabvu",
+    "slug": "about-gumambabvu",
+    "author": [
+      "mthomas"
+    ],
+    "body": "Gumambabvu was Nyauyanga's best friend. He was very tall, strong and with brown skin. He had diasagreements with Mutepaire.",
+    "image": "",
+    "published": "2025-10-21T18:18:00Z",
+    "created_at": "2025-10-21T18:19:43.461Z",
+    "updated_at": "2025-10-21T20:04:21.666Z",
+    "status": "PB"
+  }
+},
+{
+  "model": "blog.post",
+  "pk": 7,
+  "fields": {
+    "title": "Markdown post",
+    "slug": "markdown-post",
+    "author": [
+      "mthomas"
+    ],
+    "body": "This is a post formatted with markdown.\r\n---------------------------------------------\r\n\r\n*This is emphasized* and **this is more emphasized**.\r\nHere is a list:\r\n\r\n*  One\r\n*  Two\r\n*  Three\r\n\r\n\r\nAnd a [link to the Django website](https://www.djangoproject.com/).",
+    "image": "",
+    "published": "2025-10-22T12:28:51Z",
+    "created_at": "2025-10-22T12:36:03.119Z",
+    "updated_at": "2025-10-22T13:13:13.326Z",
+    "status": "PB"
+  }
+},
+{
+  "model": "blog.comment",
+  "pk": 1,
+  "fields": {
+    "post": 1,
+    "name": "Mike Thomas",
+    "email": "kudath@yahoo.co.uk",
+    "body": "How tall was Thomas?",
+    "created": "2025-10-21T13:47:07.748Z",
+    "updated": "2025-10-21T13:47:07.748Z",
+    "active": true
+  }
+},
+{
+  "model": "blog.comment",
+  "pk": 2,
+  "fields": {
+    "post": 4,
+    "name": "Mike Thomas",
+    "email": "kudath@yahoo.co.uk",
+    "body": "Who was Kwinini?",
+    "created": "2025-10-21T18:07:10.013Z",
+    "updated": "2025-10-21T18:07:10.013Z",
+    "active": true
+  }
+},
+{
+  "model": "blog.comment",
+  "pk": 3,
+  "fields": {
+    "post": 3,
+    "name": "Mike Thomas",
+    "email": "kudath@yahoo.co.uk",
+    "body": "How was Thomas related to Mavhoko?",
+    "created": "2025-10-21T18:09:50.075Z",
+    "updated": "2025-10-21T18:09:50.075Z",
+    "active": true
+  }
+}
+]

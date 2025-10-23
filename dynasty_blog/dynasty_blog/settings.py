@@ -3,9 +3,8 @@ Django settings for dynasty_blog project.
 """
 
 from pathlib import Path
-from decouple import AutoConfig, Csv
+from decouple import AutoConfig
 import dj_database_url
-from django.db.utils import OperationalError
 
 # ---------------------------------------------------------------------
 # Paths & environment
@@ -87,42 +86,34 @@ TEMPLATES = [
 WSGI_APPLICATION = "dynasty_blog.wsgi.application"
 
 # ---------------------------------------------------------------------
-# Database
+# Database (PostgreSQL only)
 # ---------------------------------------------------------------------
-# Primary: PostgreSQL (via Docker)
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME", default="blog"),
-        "USER": config("DB_USER", default="blog"),
-        "PASSWORD": config("DB_PASSWORD", default=""),
-        "HOST": config("DB_HOST", default="localhost"),
-        "PORT": config("DB_PORT", default="5432"),
-        "OPTIONS": {
-            "connect_timeout": 5,  # prevents hanging if Postgres is unreachable
-        },
-    }
-}
-
-# Support DATABASE_URL for deployments
+# Prefer DATABASE_URL if provided (e.g., for production/hosting).
 DATABASE_URL = config("DATABASE_URL", default=None)
+
 if DATABASE_URL:
-    DATABASES["default"] = dj_database_url.parse(
-        DATABASE_URL,
-        conn_max_age=config("DB_CONN_MAX_AGE", cast=int, default=600),
-        ssl_require=config("DB_SSL_REQUIRE", cast=bool, default=False),
-    )
-
-# Automatic fallback to SQLite if Postgres connection fails
-try:
-    from django.db import connections
-
-    connections["default"].cursor()
-except Exception:
-    print("⚠️  PostgreSQL not available — falling back to SQLite.")
-    DATABASES["default"] = {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    DATABASES = {
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=config("DB_CONN_MAX_AGE", cast=int, default=600),
+            ssl_require=config("DB_SSL_REQUIRE", cast=bool, default=False),
+        )
+    }
+else:
+    # Otherwise build from discrete DB_* env vars.
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": config("DB_NAME", default="blog"),
+            "USER": config("DB_USER", default="blog"),
+            "PASSWORD": config("DB_PASSWORD", default=""),
+            "HOST": config("DB_HOST", default="localhost"),
+            "PORT": config("DB_PORT", default="5432"),
+            "CONN_MAX_AGE": config("DB_CONN_MAX_AGE", cast=int, default=600),
+            "OPTIONS": {
+                "connect_timeout": 5,  # quick fail if PG isn't reachable
+            },
+        }
     }
 
 # ---------------------------------------------------------------------

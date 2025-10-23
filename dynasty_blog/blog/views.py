@@ -10,7 +10,7 @@ from django.db.models import Count
 from django.db import connection
 from taggit.models import Tag
 
-# Postgres full-text search bits (ok to import; only used when connection is PostgreSQL)
+# Postgres full-text search bits (only used when connection is PostgreSQL)
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 
 from .forms import EmailPostForm, CommentForm, SearchForm
@@ -148,9 +148,9 @@ def post_search(request):
 
             # Use Postgres full-text search if the current DB is PostgreSQL
             if connection.vendor == "postgresql":
-                search_vector = SearchVector(
-                    "title", "weight ="A"
-                    ) + SearchVector("body", weight="B")
+                search_vector = SearchVector("title", weight="A") + SearchVector(
+                    "body", weight="B"
+                )
                 search_query = SearchQuery(query)
                 results = (
                     Post.published_posts.annotate(
@@ -162,9 +162,14 @@ def post_search(request):
                 )
             else:
                 # Fallback: simple case-insensitive substring search
-                results = Post.published_posts.filter(
-                    title__icontains=query
-                ) | Post.published_posts.filter(body__icontains=query)
+                results = (
+                    (
+                        Post.published_posts.filter(title__icontains=query)
+                        | Post.published_posts.filter(body__icontains=query)
+                    )
+                    .distinct()
+                    .order_by("-published")
+                )
 
     return render(
         request,
