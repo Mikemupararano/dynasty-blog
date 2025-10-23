@@ -176,3 +176,12 @@ def post_search(request):
         "blog/post/search.html",
         {"form": form, "query": query, "results": results},
     )
+
+
+# ---------- NEW STATIC PAGES FOR NAV ----------
+def about(request):
+    return render(request, "blog/about.html")
+
+
+def contact(request):
+    return render(request, "blog/contact.html")

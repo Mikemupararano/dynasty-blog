@@ -31,4 +31,7 @@ urlpatterns = [
     path("feed/", LatestPostsFeed(), name="post_feed"),
     # Search
     path("search/", views.post_search, name="post_search"),
+    # ✅ New static pages
+    path("about/", views.about, name="about"),
+    path("contact/", views.contact, name="contact"),
 ]
