@@ -12,11 +12,59 @@
     </title>
 
     <link rel="stylesheet" href="{% static 'blog/css/blog.css' %}" />
+    <style>
+      /* ✅ Navbar Styling */
+      .navbar {
+        background-color: #0d2538; /* dark navy blue background */
+        color: white;
+        padding: 14px 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        position: relative;
+        z-index: 1000;
+      }
+      
+      .navbar .wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+      
+      .nav-left .logo {
+        font-size: 1.4em;
+        font-weight: bold;
+        color: #ffffff;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .nav-right a {
+        color: #ffffff;
+        margin-left: 25px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: color 0.2s ease, transform 0.2s ease;
+      }
+      
+      .nav-right a:hover {
+        color: #00abff;
+        transform: scale(1.05);
+      }
+      
+      /* Optional: make it fixed at top */
+      .navbar.fixed {
+        position: sticky;
+        top: 0;
+        left: 0;
+      }
+    </style>
   </head>
 
   <body>
     <!-- ✅ Navigation Bar -->
-    <nav class="navbar">
+    <nav class="navbar fixed">
       <div class="wrapper">
         <div class="nav-left">
           <a href="{% url 'blog:post_list' %}" class="logo">The Ndikiye Family Blog</a>
