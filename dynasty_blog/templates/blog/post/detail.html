@@ -7,10 +7,60 @@
 
 {% block content %}
   <h1>{{ post.title }}</h1>
-  <p class="date">Published {{ post.published }} by {{ post.author.get_full_name|default:post.author.username }}</p>
+  <p class="date">
+    Published {{ post.published }} by {{ post.author.get_full_name|default:post.author.username }}
+  </p>
 
-  {% if post.image %}
-    <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width:100%;height:auto;" />
+  {# Optional media: image, audio, video #}
+  {% if post.image or post.audio or post.video %}
+    <section class="post-media" style="margin: 1rem 0;">
+
+      {% if post.image %}
+        <figure style="margin: 0 0 1rem 0;">
+          <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width:100%;height:auto;" />
+        </figure>
+      {% endif %}
+
+      {% if post.audio %}
+        <div class="post-audio" style="margin: 0 0 1rem 0;">
+          <audio controls preload="none" style="width:100%;">
+            <source src="{{ post.audio.url }}" />
+            Your browser does not support the audio element.
+          </audio>
+          <p style="margin-top: .25rem;">
+            <a href="{{ post.audio.url }}" download>Download audio</a>
+          </p>
+        </div>
+      {% endif %}
+
+      {% if post.video %}
+        <div class="post-video" style="margin: 0 0 1rem 0;">
+          <video
+            controls
+            preload="metadata"
+            style="max-width:100%;height:auto;"
+            {% if post.image %}poster="{{ post.image.url }}"{% endif %}
+          >
+            {% with vurl=post.video.url|lower %}
+              {% if vurl|slice:"-4:" == ".mp4" %}
+                <source src="{{ post.video.url }}" type="video/mp4">
+              {% elif vurl|slice:"-5:" == ".webm" %}
+                <source src="{{ post.video.url }}" type="video/webm">
+              {% elif vurl|slice:"-4:" == ".ogg" %}
+                <source src="{{ post.video.url }}" type="video/ogg">
+              {% else %}
+                <source src="{{ post.video.url }}">
+              {% endif %}
+            {% endwith %}
+            Your browser cannot play this video.
+          </video>
+          <p style="margin-top: .25rem;">
+            <a href="{{ post.video.url }}" download>Download video</a>
+          </p>
+        </div>
+      {% endif %}
+
+    </section>
   {% endif %}
 
   {{ post.body|markdown }}
@@ -20,9 +70,9 @@
   </p>
 
   <h2>Similar posts</h2>
-  {% for post in similar_posts %}
+  {% for s in similar_posts %}
     <p>
-      <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+      <a href="{{ s.get_absolute_url }}">{{ s.title }}</a>
     </p>
   {% empty %}
     <p>There are no similar posts yet.</p>
@@ -34,7 +84,9 @@
 
   {% for comment in comments %}
     <div class="comment">
-      <p class="info">Comment {{ forloop.counter }} by {{ comment.name }} {{ comment.created }}</p>
+      <p class="info">
+        Comment {{ forloop.counter }} by {{ comment.name }} {{ comment.created }}
+      </p>
       <p>{{ comment.body|linebreaks }}</p>
     </div>
   {% empty %}

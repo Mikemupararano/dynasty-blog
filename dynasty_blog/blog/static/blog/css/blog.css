@@ -113,7 +113,13 @@ input[type=submit] {
 #sidebar p { color:#555; }
 
 /* Make images inside posts scale nicely */
-#content img { max-width:100%; height:auto; display:block; }
+#content img { 
+  max-width:100%; 
+  height:auto; 
+  display:block; 
+  margin:1em 0;
+  border-radius:6px;
+}
 
 /* ✅ Navigation Bar */
 .navbar {
@@ -140,4 +146,45 @@ input[type=submit] {
 }
 .nav-right a:hover {
   opacity:0.8;
+}
+
+/* ✅ Media section styling */
+.post-media {
+  margin:1.5em 0;
+}
+.post-media figure {
+  margin:0 0 1em 0;
+}
+.post-audio,
+.post-video {
+  margin:1em 0;
+}
+.post-audio audio,
+.post-video video {
+  width:100%;
+  outline:none;
+  border-radius:8px;
+  box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+.post-audio a,
+.post-video a {
+  display:inline-block;
+  margin-top:0.25em;
+  font-size:0.9em;
+  color:#00abff;
+}
+.post-audio a:hover,
+.post-video a:hover {
+  text-decoration:underline;
+}
+
+/* ✅ Responsive adjustments */
+@media (max-width: 900px) {
+  #content, #sidebar {
+    float:none;
+    width:100%;
+  }
+  #sidebar {
+    margin-top:20px;
+  }
 }
