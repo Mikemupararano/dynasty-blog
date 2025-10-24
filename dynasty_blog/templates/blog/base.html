@@ -1,4 +1,3 @@
-{% comment %}#Creating a base template{% endcomment %}
 {% load blog_tags %}
 {% load static %}
 <!DOCTYPE html>
@@ -12,54 +11,6 @@
     </title>
 
     <link rel="stylesheet" href="{% static 'blog/css/blog.css' %}" />
-    <style>
-      /* ✅ Navbar Styling */
-      .navbar {
-        background-color: #0d2538; /* dark navy blue background */
-        color: white;
-        padding: 14px 0;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-        position: relative;
-        z-index: 1000;
-      }
-      
-      .navbar .wrapper {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 20px;
-      }
-      
-      .nav-left .logo {
-        font-size: 1.4em;
-        font-weight: bold;
-        color: #ffffff;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-      
-      .nav-right a {
-        color: #ffffff;
-        margin-left: 25px;
-        font-weight: 500;
-        text-decoration: none;
-        transition: color 0.2s ease, transform 0.2s ease;
-      }
-      
-      .nav-right a:hover {
-        color: #00abff;
-        transform: scale(1.05);
-      }
-      
-      /* Optional: make it fixed at top */
-      .navbar.fixed {
-        position: sticky;
-        top: 0;
-        left: 0;
-      }
-    </style>
   </head>
 
   <body>
@@ -67,7 +18,7 @@
     <nav class="navbar fixed">
       <div class="wrapper">
         <div class="nav-left">
-          <a href="{% url 'blog:post_list' %}" class="logo">The Ndikiye Family Blog</a>
+          <a href="{% url 'blog:post_list' %}" class="logo">The Lost Dynasty of Pfungwe Blog</a>
         </div>
         <div class="nav-right">
           <a href="{% url 'blog:post_list' %}">Home</a>
@@ -87,43 +38,57 @@
       </div>
     </nav>
 
+    <!-- ✅ Landing Hero Section (homepage only) -->
+    {% if request.resolver_match.url_name == 'post_list' %}
+      <header class="landing-hero" role="banner">
+        <!-- No overlay wrapper — nothing blocks clicks -->
+        <div class="hero-text">
+          <h1>Welcome to Pfungwe's Lost Dynasty Family Blog</h1>
+          <p>Stories, adventures, and memories that bring us together ❤️</p>
+          <!-- Scroll straight to the posts area -->
+          <a href="#content" class="hero-btn">Explore Posts</a>
+        </div>
+      </header>
+    {% endif %}
+
+    <!-- ✅ Main Wrapper -->
     <div class="wrapper">
-      <div id="content">
-        {% block content %}
+      <div class="main-grid">
+        <div id="content">
+          {% block content %}
 
-        {% endblock %}
+          {% endblock %}
+        </div>
+
+        <div id="sidebar">
+          <h2>Pfungwe's Lost Dynasty Family Blog</h2>
+          {% total_posts as total %}
+          <p>
+            Welcome to our family blog where we share our adventures, stories, and memories. Stay tuned for updates! I’ve written <strong>{{ total }}</strong> post{{ total|pluralize }} so far.
+          </p>
+          <p>
+            <a href="{% url 'blog:post_feed' %}">Subscribe to our RSS feed</a>
+          </p>
+
+          <h3>Latest posts</h3>
+          {% show_latest_posts 3 %}
+
+          <h3>Most commented posts</h3>
+          {% get_most_commented_posts as most_commented_posts %}
+          <ul>
+            {% for post in most_commented_posts %}
+              <li>
+                <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                ({{ post.comments.count }} comments)
+              </li>
+            {% endfor %}
+          </ul>
+
+          <footer>
+            <p>&copy; 2025 MikeTech. All rights reserved.</p>
+          </footer>
+        </div>
       </div>
-
-      <div id="sidebar">
-        <h2>The Ndikiye Family Blog</h2>
-        {% total_posts as total %}
-        <p>
-          Welcome to our family blog where we share our adventures, stories, and memories. Stay tuned for updates! I’ve written <strong>{{ total }}</strong> post{{ total|pluralize }} so far.
-        </p>
-        <p>
-          <a href="{% url 'blog:post_feed' %}">Subscribe to our RSS feed</a>
-        </p>
-
-        <h3>Latest posts</h3>
-        {% show_latest_posts 3 %}
-
-        <h3>Most commented posts</h3>
-        {% get_most_commented_posts as most_commented_posts %}
-        <ul>
-          {% for post in most_commented_posts %}
-            <li>
-              <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-              ({{ post.comments.count }} comments)
-            </li>
-          {% endfor %}
-        </ul>
-
-        <footer>
-          <p>&copy; 2025 MikeTech. All rights reserved.</p>
-        </footer>
-      </div>
-
-      <div class="clearfix"></div>
     </div>
   </body>
 </html>
