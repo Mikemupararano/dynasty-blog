@@ -35,25 +35,49 @@
 
       {% if post.video %}
         <div class="post-video" style="margin: 0 0 1rem 0;">
-          <video
-            controls
-            preload="metadata"
-            style="max-width:100%;height:auto;"
-            {% if post.image %}poster="{{ post.image.url }}"{% endif %}
+          {# Responsive 16:9 wrapper with a max height so text remains visible #}
+          <div
+            style="
+              position:relative;
+              width:100%;
+              background:#000;
+              border-radius:8px;
+              overflow:hidden;
+              /* 16:9 aspect ratio box */
+              padding-top:56.25%;
+              /* cap height on tall screens */
+              max-height:60vh;
+              box-shadow:0 2px 5px rgba(0,0,0,0.1);
+            "
           >
-            {% with vurl=post.video.url|lower %}
-              {% if vurl|slice:"-4:" == ".mp4" %}
-                <source src="{{ post.video.url }}" type="video/mp4">
-              {% elif vurl|slice:"-5:" == ".webm" %}
-                <source src="{{ post.video.url }}" type="video/webm">
-              {% elif vurl|slice:"-4:" == ".ogg" %}
-                <source src="{{ post.video.url }}" type="video/ogg">
-              {% else %}
-                <source src="{{ post.video.url }}">
-              {% endif %}
-            {% endwith %}
-            Your browser cannot play this video.
-          </video>
+            <video
+              controls
+              preload="metadata"
+              {% if post.image %}poster="{{ post.image.url }}"{% endif %}
+              style="
+                position:absolute;
+                inset:0;
+                width:100%;
+                height:100%;
+                object-fit:contain;  /* letterbox if needed */
+                background:#000;
+              "
+            >
+              {% with vurl=post.video.url|lower %}
+                {% if vurl|slice:"-4:" == ".mp4" %}
+                  <source src="{{ post.video.url }}" type="video/mp4">
+                {% elif vurl|slice:"-5:" == ".webm" %}
+                  <source src="{{ post.video.url }}" type="video/webm">
+                {% elif vurl|slice:"-4:" == ".ogg" %}
+                  <source src="{{ post.video.url }}" type="video/ogg">
+                {% else %}
+                  <source src="{{ post.video.url }}">
+                {% endif %}
+              {% endwith %}
+              Your browser cannot play this video.
+            </video>
+          </div>
+
           <p style="margin-top: .25rem;">
             <a href="{{ post.video.url }}" download>Download video</a>
           </p>
