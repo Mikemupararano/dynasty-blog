@@ -5,6 +5,39 @@ from django.utils import timezone
 from taggit.managers import TaggableManager
 
 
+# --- Make User objects display as full name in Admin & ForeignKey widgets ---
+# We try to patch immediately; if the app registry isn't ready yet, we also
+# patch after migrations using a signal as a fallback.
+def _patch_user_str():
+    try:
+        from django.contrib.auth import get_user_model
+
+        User = get_user_model()
+        if not getattr(User, "_str_patched_for_full_name", False):
+
+            def _user_str(self):
+                full = (self.get_full_name() or "").strip()
+                return full if full else self.get_username()
+
+            User.__str__ = _user_str
+            User._str_patched_for_full_name = True
+    except Exception:
+        # If this runs too early (e.g., during app loading), we'll patch later
+        pass
+
+
+_patch_user_str()
+
+# Fallback: ensure the patch exists after migrations when apps are fully ready
+from django.db.models.signals import post_migrate
+from django.dispatch import receiver
+
+
+@receiver(post_migrate)
+def _ensure_user_str_patched(sender, **kwargs):
+    _patch_user_str()
+
+
 # ---------------------------------------------------------------------
 # Custom Manager for Published Posts
 # ---------------------------------------------------------------------
@@ -63,6 +96,23 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def author_display(self) -> str:
+        """
+        Prefer the author's full name; fall back to a prettified username.
+        Useful for templates and admin list displays.
+        """
+        user = self.author
+        full = (user.get_full_name() or "").strip()
+        if full:
+            return full
+        # Graceful fallback: "mike_thomas" / "mike.thomas" -> "Mike Thomas"
+        uname = (
+            (getattr(user, "username", "") or "").replace("_", " ").replace(".", " ")
+        )
+        pretty = uname.title().strip()
+        return pretty or user.get_username()
 
     def get_absolute_url(self):
         """Return canonical URL for a post."""
