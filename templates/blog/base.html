@@ -56,6 +56,16 @@
       <div class="main-grid">
         <div id="content">
           {% block content %}
+          {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li class="message {{ message.tags }}">
+          {{ message }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
 
           {% endblock %}
         </div>

@@ -2,19 +2,19 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
+from django.db import connection
+from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.views.generic import ListView
 from django.views.decorators.http import require_POST
-from django.db.models import Count
-from django.db import connection
+from django.views.generic import ListView
 from taggit.models import Tag
 
 # Postgres full-text search bits (only used when connection is PostgreSQL)
-from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 
-from .forms import EmailPostForm, CommentForm, SearchForm
-from .models import Post, Comment
+from .forms import EmailPostForm, CommentForm, SearchForm, ContactForm
+from .models import Post
 
 
 def post_share(request, post_id):
@@ -41,7 +41,6 @@ def post_share(request, post_id):
                 )
                 messages.success(request, "Email sent successfully.")
                 sent = True
-                # PRG pattern to prevent form resubmission
                 return redirect(reverse("blog:post_share", args=[post.id]) + "?sent=1")
             except Exception as e:
                 messages.error(request, f"Could not send email: {e}")
@@ -51,9 +50,7 @@ def post_share(request, post_id):
             sent = True
 
     return render(
-        request,
-        "blog/post/share.html",
-        {"post": post, "form": form, "sent": sent},
+        request, "blog/post/share.html", {"post": post, "form": form, "sent": sent}
     )
 
 
@@ -65,14 +62,18 @@ class PostListView(ListView):
 
 
 def post_list(request, tag_slug=None):
+    """Function-based post list (your urls.py expects this name)."""
     posts_list = Post.published_posts.all()
     tag = None
+
     if tag_slug:
         tag = get_object_or_404(Tag, slug=tag_slug)
         posts_list = posts_list.filter(tags__in=[tag])
+
     paginator = Paginator(posts_list, 3)
     page_number = request.GET.get("page", 1)
     posts = paginator.get_page(page_number)
+
     return render(request, "blog/post/list.html", {"posts": posts, "tag": tag})
 
 
@@ -86,13 +87,9 @@ def post_detail(request, year, month, day, post):
         published__day=day,
     )
 
-    # Active comments
     comments = post.comments.filter(active=True)
-
-    # Comment form
     form = CommentForm()
 
-    # Similar posts by shared tags
     post_tag_ids = list(post.tags.values_list("id", flat=True))
     if post_tag_ids:
         similar_posts = (
@@ -121,6 +118,7 @@ def post_detail(request, year, month, day, post):
 def post_comment(request, post_id):
     post = get_object_or_404(Post, id=post_id, status=Post.Status.PUBLISHED)
     comment = None
+
     form = CommentForm(data=request.POST)
     if form.is_valid():
         comment = form.save(commit=False)
@@ -129,6 +127,7 @@ def post_comment(request, post_id):
         messages.success(request, "Your comment has been submitted successfully.")
     else:
         messages.error(request, "Please correct the errors below.")
+
     return render(
         request,
         "blog/post/comment.html",
@@ -146,7 +145,6 @@ def post_search(request):
         if form.is_valid():
             query = form.cleaned_data["query"]
 
-            # Use Postgres full-text search if the current DB is PostgreSQL
             if connection.vendor == "postgresql":
                 search_vector = SearchVector("title", weight="A") + SearchVector(
                     "body", weight="B"
@@ -161,7 +159,6 @@ def post_search(request):
                     .order_by("-rank", "-published")
                 )
             else:
-                # Fallback: simple case-insensitive substring search
                 results = (
                     (
                         Post.published_posts.filter(title__icontains=query)
@@ -178,10 +175,49 @@ def post_search(request):
     )
 
 
-# ---------- NEW STATIC PAGES FOR NAV ----------
+# ---------- STATIC PAGES ----------
 def about(request):
     return render(request, "blog/about.html")
 
 
+# Keep this if your urls.py references views.contact (GET-only page)
+# BUT the real form handling should be contact_view below.
 def contact(request):
-    return render(request, "blog/contact.html")
+    """
+    Simple GET render (kept for backwards compatibility).
+    If you want the form to work, ensure urls.py points to contact_view instead.
+    """
+    form = ContactForm()
+    return render(request, "blog/contact.html", {"form": form})
+
+
+def contact_view(request):
+    """
+    Full contact form handler (your urls.py currently points here).
+    """
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data["name"]
+            email = form.cleaned_data["email"]
+            subject = form.cleaned_data["subject"]
+            message = form.cleaned_data["message"]
+
+            send_mail(
+                subject=f"[Ndikiye Family Blog] {subject}",
+                message=f"From: {name} <{email}>\n\n{message}",
+                from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None) or email,
+                recipient_list=[
+                    getattr(settings, "CONTACT_EMAIL", "hello@ndikiyefamily.com")
+                ],
+                fail_silently=False,
+            )
+
+            messages.success(request, "Thanks! Your message has been sent.")
+            return redirect("blog:contact")  # IMPORTANT: namespaced
+        else:
+            messages.error(request, "Please fix the errors below.")
+    else:
+        form = ContactForm()
+
+    return render(request, "blog/contact.html", {"form": form})

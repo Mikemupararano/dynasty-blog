@@ -1,318 +1,544 @@
-/* ---------- Base ---------- */
-body { 
-  margin:0;
-  padding:0;
-  font-family:helvetica, sans-serif; 
-  line-height:1.6;
-  color:#333;
-  background:#fff;
-  scroll-behavior:smooth; /* smooth scroll to #content */
+/* =========================
+   Base / Reset
+========================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-a { 
-  color:#00abff;
-  text-decoration:none; 
+html,
+body {
+  height: 100%;
 }
 
-h1 { 
-  font-weight:normal;
-  border-bottom:1px solid #bbb;
-  padding:0 0 10px 0;
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background: #fff;
+  scroll-behavior: smooth;
+}
+
+a {
+  color: #00abff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1 {
+  font-weight: normal;
+  border-bottom: 1px solid #bbb;
+  padding: 0 0 10px 0;
+  margin: 0 0 14px 0;
 }
 
 h2 {
-  font-weight:normal;
-  margin:30px 0 0;
+  font-weight: normal;
+  margin: 30px 0 0;
 }
 
-/* ---------- Wrapper & Layout (Grid) ---------- */
-.wrapper { 
-  max-width:1200px;
-  margin:0 auto; 
-  padding:0 20px;
+/* =========================
+   Wrapper & Layout (Grid)
+========================= */
+.wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .main-grid {
-  display:grid;
-  grid-template-columns: 2fr 1fr; /* content | sidebar */
-  gap:32px;
-  align-items:start;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 32px;
+  align-items: start;
+
+  /* create a stacking context */
+  position: relative;
+  z-index: 0;
 }
 
-#content, #sidebar { 
-  float:none; 
-  width:auto; 
-  padding:0;
+/* ensure content stays above anything accidental */
+#content {
+  float: none;
+  width: auto;
+  padding: 0;
+
+  position: relative;
+  z-index: 5;
 }
 
-#sidebar { 
-  background:#f5f5f5; 
-  padding:18px;
-  border-radius:8px;
+#sidebar {
+  float: none;
+  width: auto;
+  padding: 18px;
+  background: #f5f5f5;
+  border-radius: 8px;
+
+  position: relative;
+  z-index: 1;
 }
 
-/* ---------- Pagination ---------- */
-.pagination { 
-  margin:40px 0; 
-  font-weight:bold;
+/* =========================
+   Pagination
+========================= */
+.pagination {
+  margin: 40px 0;
+  font-weight: bold;
 }
 
-/* ---------- Forms ---------- */
-label { 
-  display:block;
-  color:#333;
-  margin:0 0 4px; 
-}
-input, textarea { 
-  display:block;
-  width:100%;
-  margin:0 0 10px;
-  background:#ededed;
-  border:0;
-  padding:8px 10px;
-  font-size:14px;
-  border-radius:4px;
-  box-sizing:border-box;
-}
-input[type=submit] {
-  font-weight:bold;
-  background:#00abff;
-  color:#fff;
-  padding:10px 20px;
-  font-size:14px;
-  text-transform:uppercase; 
-  border:none;
-  border-radius:4px;
-  cursor:pointer;
-}
-.errorlist { 
-  color:#cc0033;
-  padding-left:10px; 
+/* =========================
+   Forms (global)
+   (This is the important part)
+========================= */
+label {
+  display: block;
+  color: #333;
+  margin: 0 0 6px;
+  font-weight: 600;
 }
 
-/* ---------- Comments ---------- */
-.comment { padding:10px; }
-.comment:nth-child(even) { background:#efefef; }
-.comment .info {
-  font-weight:bold;
-  font-size:12px;
-  color:#666;
+/* Normalize controls */
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
 }
 
-/* ---------- Share form ---------- */
-.share-form {
-  max-width:400px;
-  margin-top:1em;
-}
-.share-form button {
-  padding:0.4em 1em;
-  background-color:#2b6cb0;
-  color:white;
-  border:none;
-  border-radius:4px;
-  cursor:pointer;
-}
-.share-form button:hover {
-  background-color:#2c5282;
+/* Make controls visible + interactable no matter what */
+input,
+textarea,
+select {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 0 12px;
+
+  padding: 10px 12px;
+  font-size: 14px;
+
+  background: #fff !important;
+  color: #111 !important;
+  caret-color: #111 !important;
+
+  border: 1px solid #ddd !important;
+  border-radius: 8px;
+
+  outline: none;
+
+  /* these fix “can’t click/type” when some CSS breaks it */
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+
+  /* avoid weird collapsing */
+  min-height: 40px;
 }
 
-/* ---------- Sidebar polish ---------- */
-#sidebar p { color:#555; }
-
-/* ---------- Post images ---------- */
-#content img { 
-  max-width:100%; 
-  height:auto; 
-  display:block; 
-  margin:1em 0;
-  border-radius:6px;
+textarea {
+  min-height: 140px !important;
+  resize: vertical;
 }
 
-/* ---------- Navigation Bar ---------- */
-.navbar {
-  background-color:#0d2538;
-  color:white;
-  padding:14px 0;
-  box-shadow:0 2px 5px rgba(0,0,0,0.15);
-  position:relative;
-  z-index:1000;
-}
-.navbar .wrapper {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.nav-left .logo {
-  font-size:1.4em;
-  font-weight:bold;
-  color:white;
-  text-transform:uppercase;
-  letter-spacing:0.5px;
-}
-.nav-right a {
-  color:white;
-  margin-left:25px;
-  font-weight:500;
-  text-decoration:none;
-  transition:color 0.2s ease, transform 0.2s ease;
-}
-.nav-right a:hover {
-  color:#00abff;
-  transform:scale(1.05);
-}
-.navbar.fixed {
-  position:sticky;
-  top:0;
-  left:0;
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #00abff !important;
+  box-shadow: 0 0 0 3px rgba(0, 171, 255, 0.15);
 }
 
-/* ---------- Landing Page Hero (no stretch, photo on right half) ---------- */
-/* Goal: never over-upscale the image. Keep it crisp by only filling
-   the hero's height and letting it sit on the RIGHT half.
-   Text remains on the left on a dark gradient. */
-.landing-hero {
-  position:relative;
-  width:100%;
-
-  /* shorter hero to avoid scaling up small images */
-  height:30vh;
-  min-height:220px;
-  max-height:360px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-  border-bottom:2px solid #00abff;
-
-  /* Two-layer background: gradient (full) + photo (right, height-fit) */
-  background:
-    linear-gradient(90deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.45) 45%, rgba(0,0,0,0.15) 70%, rgba(0,0,0,0) 100%),
-    url("../images/family-banner.jpg") right center / auto 100% no-repeat;
-
-  /* base color behind transparent zones */
-  background-color:#111;
+/* Submit buttons */
+input[type="submit"] {
+  font-weight: bold;
+  background: #00abff;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 14px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-/* ✅ On wider screens, give the image a little more room without stretching */
-@media (min-width: 1100px) {
-  .landing-hero {
-    height:32vh;
-    max-height:400px;
-    background-size: 100% 100%, auto 100%; /* gradient covers; image stays height-fit */
-    background-position: center, 92% center; /* photo nudged further right */
+input[type="submit"]:hover {
+  background: #0092da;
+}
+
+.errorlist {
+  color: #cc0033;
+  padding-left: 18px;
+  margin: 6px 0 12px;
+}
+
+/* =========================
+   Contact page helpers
+========================= */
+.contact-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.lead {
+  margin-bottom: 1.25rem;
+  opacity: 0.9;
+}
+
+/* Make sure form is above anything overlay-ish */
+.contact-form {
+  margin-top: 1rem;
+  position: relative;
+  z-index: 10;
+}
+
+/* Field layout */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
-/* ✅ On very large and hi-res screens, allow cover (assumes large source image) */
+.field {
+  margin-bottom: 1rem;
+}
+
+.field-error {
+  margin-top: 0.35rem;
+  color: #b00020;
+  font-size: 0.92rem;
+}
+
+.form-alert {
+  padding: 0.75rem;
+  border-radius: 10px;
+  background: #fff3f3;
+  border: 1px solid #ffd0d0;
+  margin-bottom: 1rem;
+}
+
+/* Your button class used in contact.html */
+.btn {
+  display: inline-block;
+  padding: 0.85rem 1.1rem;
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  background: #00abff;
+  color: #fff;
+}
+
+.btn:hover {
+  background: #0092da;
+}
+
+/* =========================
+   Comments
+========================= */
+.comment {
+  padding: 10px;
+}
+
+.comment:nth-child(even) {
+  background: #efefef;
+}
+
+.comment .info {
+  font-weight: bold;
+  font-size: 12px;
+  color: #666;
+}
+
+/* =========================
+   Share form
+========================= */
+.share-form {
+  max-width: 400px;
+  margin-top: 1em;
+}
+
+.share-form button {
+  padding: 0.4em 1em;
+  background-color: #2b6cb0;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.share-form button:hover {
+  background-color: #2c5282;
+}
+
+/* =========================
+   Sidebar polish
+========================= */
+#sidebar p {
+  color: #555;
+}
+
+/* =========================
+   Post images
+========================= */
+#content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1em 0;
+  border-radius: 6px;
+}
+
+/* =========================
+   Navigation Bar
+========================= */
+.navbar {
+  background-color: #0d2538;
+  color: white;
+  padding: 14px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 1000;
+}
+
+.navbar .wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-left .logo {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nav-right a {
+  color: white;
+  margin-left: 25px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.nav-right a:hover {
+  color: #00abff;
+  transform: scale(1.05);
+  text-decoration: none;
+}
+
+.navbar.fixed {
+  position: sticky;
+  top: 0;
+  left: 0;
+}
+
+/* =========================
+   Landing Page Hero
+========================= */
+.landing-hero {
+  position: relative;
+  width: 100%;
+
+  height: 30vh;
+  min-height: 220px;
+  max-height: 360px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-bottom: 2px solid #00abff;
+
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.45) 45%, rgba(0, 0, 0, 0.15) 70%, rgba(0, 0, 0, 0) 100%),
+    url("../images/family-banner.jpg") right center / auto 100% no-repeat;
+
+  background-color: #111;
+}
+
+@media (min-width: 1100px) {
+  .landing-hero {
+    height: 32vh;
+    max-height: 400px;
+    background-size: 100% 100%, auto 100%;
+    background-position: center, 92% center;
+  }
+}
+
 @media (min-width: 1600px) {
   .landing-hero {
     background:
-      linear-gradient(90deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.15) 75%, rgba(0,0,0,0.0) 100%),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.35) 50%, rgba(0, 0, 0, 0.15) 75%, rgba(0, 0, 0, 0) 100%),
       url("../images/family-banner.jpg") center center / cover no-repeat;
   }
 }
 
-/* ✅ Hero content (always clickable) */
 .hero-text {
-  text-align:left;
-  color:#fff;
-  padding:0 1rem;
-  max-width:700px;
-  position:relative;
-  z-index:2;
+  text-align: left;
+  color: #fff;
+  padding: 0 1rem;
+  max-width: 700px;
+  position: relative;
+  z-index: 2;
 }
 
 .hero-text h1 {
-  font-size:1.8rem;
-  margin:0 0 0.4rem 0;
-  letter-spacing:0.3px;
-  text-shadow:0 2px 4px rgba(0,0,0,0.6);
+  font-size: 1.8rem;
+  margin: 0 0 0.4rem 0;
+  letter-spacing: 0.3px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
+
 .hero-text h1::after {
-  content:"";
-  display:block;
-  width:90px;
-  height:2px;
-  margin:10px 0 0;
-  background:rgba(255,255,255,0.85);
+  content: "";
+  display: block;
+  width: 90px;
+  height: 2px;
+  margin: 10px 0 0;
+  background: rgba(255, 255, 255, 0.85);
 }
 
 .hero-text p {
-  font-size:1rem;
-  font-weight:300;
-  margin-top:0.4rem;
-  text-shadow:0 2px 4px rgba(0,0,0,0.6);
+  font-size: 1rem;
+  font-weight: 300;
+  margin-top: 0.4rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 .hero-btn {
-  display:inline-block;
-  margin-top:1rem;
-  background:#00abff;
-  color:white;
-  padding:0.6em 1.2em;
-  border-radius:6px;
-  font-weight:600;
-  text-transform:uppercase;
-  letter-spacing:0.3px;
-  transition:transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
-  box-shadow:0 4px 12px rgba(0,0,0,0.25);
-  cursor:pointer;
-  z-index:3;
-  position:relative;
-}
-.hero-btn:hover {
-  background:#0092da;
-  transform:translateY(-2px);
-  box-shadow:0 6px 14px rgba(0,0,0,0.25);
+  display: inline-block;
+  margin-top: 1rem;
+  background: #00abff;
+  color: white;
+  padding: 0.6em 1.2em;
+  border-radius: 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  z-index: 3;
+  position: relative;
+  text-decoration: none;
 }
 
-/* ---------- Media section styling ---------- */
+.hero-btn:hover {
+  background: #0092da;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+/* =========================
+   Media section styling
+========================= */
 .post-media {
-  margin:1.5em 0;
+  margin: 1.5em 0;
 }
+
 .post-media figure {
-  margin:0 0 1em 0;
+  margin: 0 0 1em 0;
 }
+
 .post-audio,
 .post-video {
-  margin:1em 0;
+  margin: 1em 0;
 }
+
 .post-audio audio,
 .post-video video {
-  width:100%;
-  outline:none;
-  border-radius:8px;
-  box-shadow:0 2px 5px rgba(0,0,0,0.1);
+  width: 100%;
+  outline: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
 .post-audio a,
 .post-video a {
-  display:inline-block;
-  margin-top:0.25em;
-  font-size:0.9em;
-  color:#00abff;
+  display: inline-block;
+  margin-top: 0.25em;
+  font-size: 0.9em;
+  color: #00abff;
 }
+
 .post-audio a:hover,
 .post-video a:hover {
-  text-decoration:underline;
+  text-decoration: underline;
 }
 
-/* ---------- Responsive adjustments ---------- */
-@media (max-width:900px) {
-  .main-grid { grid-template-columns:1fr; }
-  #sidebar { margin-top:20px; }
+/* =========================
+   Responsive adjustments
+========================= */
+@media (max-width: 900px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  #sidebar {
+    margin-top: 20px;
+  }
 
   .landing-hero {
-    height:28vh;
-    min-height:200px;
-    max-height:320px;
+    height: 28vh;
+    min-height: 200px;
+    max-height: 320px;
 
-    /* On small screens keep the photo crisp by height-fitting */
     background:
-      linear-gradient(90deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.15) 85%, rgba(0,0,0,0) 100%),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.45) 55%, rgba(0, 0, 0, 0.15) 85%, rgba(0, 0, 0, 0) 100%),
       url("../images/family-banner.jpg") center right / auto 100% no-repeat;
   }
 
-  .hero-text h1 { font-size:1.5rem; }
-  .hero-text p  { font-size:0.95rem; }
+  .hero-text h1 {
+    font-size: 1.5rem;
+  }
+
+  .hero-text p {
+    font-size: 0.95rem;
+  }
+}
+
+/* =========================
+   Messages (Django)
+========================= */
+.messages {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.25rem;
+}
+
+.message {
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.message.success {
+  background: #e7f7ed;
+  color: #1e7f43;
+  border: 1px solid #bfe8d0;
+}
+
+.message.error {
+  background: #fdeaea;
+  color: #a40000;
+  border: 1px solid #f5bcbc;
+}
+
+.message.info {
+  background: #eef4ff;
+  color: #1d4ed8;
+  border: 1px solid #c7d7ff;
 }
