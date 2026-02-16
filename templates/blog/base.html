@@ -10,7 +10,8 @@
       {% endblock %}
     </title>
 
-    <link rel="stylesheet" href="{% static 'blog/css/blog.css' %}" />
+   <link rel="stylesheet" href="{% static 'blog/css/blog.css' %}?v=1">
+
   </head>
 
   <body>
@@ -95,7 +96,8 @@
           </ul>
 
           <footer>
-            <p>&copy; 2025 MikeTech. All rights reserved.</p>
+           <p>&copy; {% now "Y" %} Madhara Digital Group. All rights reserved.</p>
+            <p>Built with Django and love ❤️</p>
           </footer>
         </div>
       </div>

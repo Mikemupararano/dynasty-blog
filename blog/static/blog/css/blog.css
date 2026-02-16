@@ -80,7 +80,6 @@ h2 {
   border-radius: 8px;
   position: relative;
   z-index: 1;
-
   line-height: 1.65;
   font-size: 0.98rem;
 }
@@ -181,13 +180,10 @@ input[type="submit"]:hover {
 
 /* =========================
    Contact page styles
-   (IMPORTANT: remove inline <style> from contact.html)
 ========================= */
 .contact-wrap {
   max-width: 100%;
-  /* fill the content column */
   margin: 0;
-  /* stop centering */
 }
 
 .lead {
@@ -200,7 +196,6 @@ input[type="submit"]:hover {
   position: relative;
   z-index: 10;
   max-width: 1000px;
-  /* readable width */
 }
 
 .form-grid {
@@ -276,7 +271,7 @@ input[type="submit"]:hover {
 .share-form button {
   padding: 0.4em 1em;
   background-color: #2b6cb0;
-  color: white;
+  color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -302,7 +297,7 @@ input[type="submit"]:hover {
 ========================= */
 .navbar {
   background-color: #0d2538;
-  color: white;
+  color: #fff;
   padding: 14px 0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
   position: relative;
@@ -318,13 +313,13 @@ input[type="submit"]:hover {
 .nav-left .logo {
   font-size: 1.4em;
   font-weight: bold;
-  color: white;
+  color: #fff;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .nav-right a {
-  color: white;
+  color: #fff;
   margin-left: 25px;
   font-weight: 500;
   text-decoration: none;
@@ -345,6 +340,7 @@ input[type="submit"]:hover {
 
 /* =========================
    Landing Page Hero
+   (Image removed; nice background color)
 ========================= */
 .landing-hero {
   position: relative;
@@ -358,37 +354,33 @@ input[type="submit"]:hover {
   overflow: hidden;
   border-bottom: 2px solid #00abff;
 
-  background:
-    linear-gradient(90deg,
-      rgba(0, 0, 0, 0.65) 0%,
-      rgba(0, 0, 0, 0.45) 45%,
-      rgba(0, 0, 0, 0.15) 70%,
-      rgba(0, 0, 0, 0) 100%),
-    url("../images/family-banner.jpg") right center / auto 100% no-repeat;
+  /* Clean modern gradient that matches the navbar palette */
+  background: linear-gradient(135deg, #0d2538 0%, #153e5c 45%, #1f6a96 100%);
 
-  background-color: #111;
+  /* Guarantee no image can be applied from older rules */
+  background-image: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
 }
 
+/* large screens */
 @media (min-width: 1100px) {
   .landing-hero {
     height: 32vh;
     max-height: 400px;
-    background-size: 100% 100%, auto 100%;
-    background-position: center, 92% center;
   }
 }
 
-@media (min-width: 1600px) {
+/* small screens */
+@media (max-width: 900px) {
   .landing-hero {
-    background:
-      linear-gradient(90deg,
-        rgba(0, 0, 0, 0.55) 0%,
-        rgba(0, 0, 0, 0.35) 50%,
-        rgba(0, 0, 0, 0.15) 75%,
-        rgba(0, 0, 0, 0) 100%),
-      url("../images/family-banner.jpg") center center / cover no-repeat;
+    height: 28vh;
+    min-height: 200px;
+    max-height: 320px;
   }
 }
+
 
 .hero-text {
   text-align: left;
@@ -397,6 +389,7 @@ input[type="submit"]:hover {
   max-width: 700px;
   position: relative;
   z-index: 2;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 }
 
 .hero-text h1 {
@@ -426,7 +419,7 @@ input[type="submit"]:hover {
   display: inline-block;
   margin-top: 1rem;
   background: #00abff;
-  color: white;
+  color: #fff;
   padding: 0.6em 1.2em;
   border-radius: 6px;
   font-weight: 600;
@@ -484,7 +477,7 @@ input[type="submit"]:hover {
 }
 
 /* =========================
-   Responsive adjustments
+   Responsive adjustments (text sizing)
 ========================= */
 @media (max-width: 900px) {
   .main-grid {
@@ -493,20 +486,6 @@ input[type="submit"]:hover {
 
   #sidebar {
     margin-top: 20px;
-  }
-
-  .landing-hero {
-    height: 28vh;
-    min-height: 200px;
-    max-height: 320px;
-
-    background:
-      linear-gradient(90deg,
-        rgba(0, 0, 0, 0.65) 0%,
-        rgba(0, 0, 0, 0.45) 55%,
-        rgba(0, 0, 0, 0.15) 85%,
-        rgba(0, 0, 0, 0) 100%),
-      url("../images/family-banner.jpg") center right / auto 100% no-repeat;
   }
 
   .hero-text h1 {
@@ -550,4 +529,13 @@ input[type="submit"]:hover {
   background: #eef4ff;
   color: #1d4ed8;
   border: 1px solid #c7d7ff;
+}
+
+/* =========================
+   FORCE OVERRIDE (last rule wins)
+   Keep this at the very bottom to guarantee the old banner never appears.
+========================= */
+.landing-hero {
+  background-image: none !important;
+  background: linear-gradient(135deg, #0d2538 0%, #153e5c 45%, #1f6a96 100%) !important;
 }
