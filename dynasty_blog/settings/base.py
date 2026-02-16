@@ -6,6 +6,7 @@ from pathlib import Path
 from decouple import AutoConfig
 from django.core.management.utils import get_random_secret_key
 import dj_database_url
+from decouple import config
 import os
 from dotenv import load_dotenv
 
@@ -14,7 +15,8 @@ load_dotenv()
 # ---------------------------------------------------------------------
 # Paths & environment
 # ---------------------------------------------------------------------
-BASE_DIR = Path(__file__).resolve().parent.parent
+# BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Make decouple read .env placed next to manage.py (BASE_DIR/.env)
 config = AutoConfig(search_path=BASE_DIR)
