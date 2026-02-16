@@ -1,23 +1,31 @@
 from .base import *
 from decouple import config, Csv
 
-# -------------------------
-# Production
-# -------------------------
 DEBUG = False
 
-# Comma-separated in env:
-# ALLOWED_HOSTS=example.com,www.example.com
-# Csv() already returns a Python list, so DO NOT call .tolist()
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv(), default="")
+ALLOWED_HOSTS = [
+    h.strip() for h in config("ALLOWED_HOSTS", cast=Csv(), default="") if h.strip()
+]
+CSRF_TRUSTED_ORIGINS = [
+    o.strip()
+    for o in config("CSRF_TRUSTED_ORIGINS", cast=Csv(), default="")
+    if o.strip()
+]
 
-# Comma-separated in env (must include scheme):
-# CSRF_TRUSTED_ORIGINS=https://example.com,https://www.example.com
-CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", cast=Csv(), default="")
+# Behind reverse proxy (Nginx/Traefik/Caddy)
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Security
 SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", cast=bool, default=True)
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = config("SESSION_COOKIE_SECURE", cast=bool, default=True)
+CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE", cast=bool, default=True)
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
+SECURE_REFERRER_POLICY = "same-origin"
+
+# HSTS (enable only once HTTPS is confirmed working end-to-end)
+SECURE_HSTS_SECONDS = config("SECURE_HSTS_SECONDS", cast=int, default=0)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = config(
+    "SECURE_HSTS_INCLUDE_SUBDOMAINS", cast=bool, default=True
+)
+SECURE_HSTS_PRELOAD = config("SECURE_HSTS_PRELOAD", cast=bool, default=False)
