@@ -1,6 +1,9 @@
+# blog/views.py
+
 from django.conf import settings
 from django.contrib import messages
-from django.core.mail import send_mail
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
+from django.core.mail import EmailMessage, send_mail
 from django.core.paginator import Paginator
 from django.db import connection
 from django.db.models import Count
@@ -9,9 +12,6 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.views.generic import ListView
 from taggit.models import Tag
-
-# Postgres full-text search bits (only used when connection is PostgreSQL)
-from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 
 from .forms import EmailPostForm, CommentForm, SearchForm, ContactForm
 from .models import Post
@@ -180,43 +180,42 @@ def about(request):
     return render(request, "blog/about.html")
 
 
-# Keep this if your urls.py references views.contact (GET-only page)
-# BUT the real form handling should be contact_view below.
 def contact(request):
     """
-    Simple GET render (kept for backwards compatibility).
-    If you want the form to work, ensure urls.py points to contact_view instead.
-    """
-    form = ContactForm()
-    return render(request, "blog/contact.html", {"form": form})
-
-
-def contact_view(request):
-    """
-    Full contact form handler (your urls.py currently points here).
+    Single contact endpoint (GET + POST).
+    Sends the message to your inbox and sets Reply-To to the sender,
+    so clicking Reply emails the person who filled the form.
     """
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
             name = form.cleaned_data["name"]
-            email = form.cleaned_data["email"]
+            sender_email = form.cleaned_data["email"]
             subject = form.cleaned_data["subject"]
             message = form.cleaned_data["message"]
 
-            send_mail(
-                subject=f"[Ndikiye Family Blog] {subject}",
-                message=f"From: {name} <{email}>\n\n{message}",
-                from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None) or email,
-                recipient_list=[
-                    getattr(settings, "CONTACT_EMAIL", "hello@ndikiyefamily.com")
-                ],
-                fail_silently=False,
+            # Where contact form messages should go (your inbox).
+            # Prefer CONTACT_EMAIL if you set it, otherwise fall back to EMAIL_HOST_USER.
+            to_email = (
+                getattr(settings, "CONTACT_EMAIL", None) or settings.EMAIL_HOST_USER
             )
 
+            # Send FROM your authenticated sender (Gmail), but set Reply-To to the visitor.
+            email = EmailMessage(
+                subject=f"[Ndikiye Family Blog] {subject}",
+                body=f"From: {name} <{sender_email}>\n\n{message}",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[to_email],
+                reply_to=[sender_email],
+            )
+            email.send(fail_silently=False)
+
             messages.success(request, "Thanks! Your message has been sent.")
-            return redirect("blog:contact")  # IMPORTANT: namespaced
-        else:
-            messages.error(request, "Please fix the errors below.")
+            return redirect(
+                "blog:contact"
+            )  # PRG pattern: prevents double-send on refresh
+
+        messages.error(request, "Please fix the errors below.")
     else:
         form = ContactForm()
 
