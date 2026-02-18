@@ -23,7 +23,8 @@
       {% endfor %}
     </p>
 
-    <p class="date">Published {{ post.published|date:'F j, Y' }} by {{ post.author }}</p>
+    <p class="date">Published {{ post.published|date:'F j, Y' }} by {{ post.author.get_full_name|default:post.author.username }}</p>
+
 
     {% if post.image %}
       <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width:100%;height:auto;" />
