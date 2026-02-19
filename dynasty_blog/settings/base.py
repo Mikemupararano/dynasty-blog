@@ -184,7 +184,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # WhiteNoise static files storage (compressed + hashed filenames)
 STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    }
+    },
 }
