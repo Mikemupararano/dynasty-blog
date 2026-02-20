@@ -19,6 +19,7 @@ services:
     volumes:
       - static_volume:/app/staticfiles
       - media_volume:/app/media
+    command: gunicorn dynasty_blog.wsgi:application --bind 0.0.0.0:8000 --access-logfile - --error-logfile - --capture-output --log-level debug
 
 volumes:
   postgres_data:
