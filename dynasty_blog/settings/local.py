@@ -1,3 +1,5 @@
+from faulthandler import disable
+
 from .base import *
 from decouple import config
 import dj_database_url
@@ -6,6 +8,7 @@ import dj_database_url
 # Local development
 # -------------------------
 DEBUG = True
+DB_SSLMODE = "disable"
 
 ALLOWED_HOSTS = [
     "127.0.0.1",

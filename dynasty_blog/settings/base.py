@@ -1,53 +1,67 @@
 """
 Django settings for dynasty_blog project.
+
+This version is corrected for:
+- Clean env loading (no shadowing config)
+- Proper BASE_DIR
+- Local Postgres SSL disabled by default (fixes: "server does not support SSL, but SSL was required")
+- Production SSL controllable via env (DATABASE_URL + DB_SSLMODE / DB_SSL_REQUIRE)
+- Request context processor enabled (needed for canonical URLs in templates)
+- Whitenoise + static/media sanity
 """
 
 from pathlib import Path
-from decouple import AutoConfig
-from django.core.management.utils import get_random_secret_key
-import dj_database_url
-from decouple import config
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
+from django.core.management.utils import get_random_secret_key
+from decouple import AutoConfig
+import dj_database_url
+
 
 # ---------------------------------------------------------------------
 # Paths & environment
 # ---------------------------------------------------------------------
-# BASE_DIR = Path(__file__).resolve().parent.parent
+# Assuming structure: dynasty-blog/<project>/dynasty_blog/settings.py
+# settings.py is 2 levels down from repo root -> adjust if needed
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-# Make decouple read .env placed next to manage.py (BASE_DIR/.env)
-config = AutoConfig(search_path=BASE_DIR)
+# Read .env placed next to manage.py (BASE_DIR/.env)
+env = AutoConfig(search_path=BASE_DIR)
+
+
+def env_bool(key: str, default: bool = False) -> bool:
+    """Robust bool parsing for env vars."""
+    return str(env(key, default=str(int(default)))).strip().lower() in (
+        "1",
+        "true",
+        "yes",
+        "on",
+    )
+
 
 # ---------------------------------------------------------------------
 # Security & core config
 # ---------------------------------------------------------------------
-# Automatically generate a temporary key if .env SECRET_KEY is missing (for dev only)
-SECRET_KEY = config("SECRET_KEY", default=get_random_secret_key())
+SECRET_KEY = env("SECRET_KEY", default=get_random_secret_key())
 
-DEBUG = config("DEBUG", cast=bool, default=False)
+DEBUG = env_bool("DEBUG", default=False)
 
-# Comma-separated list in .env, e.g. "127.0.0.1,localhost"
 ALLOWED_HOSTS = [
     h.strip()
-    for h in config("ALLOWED_HOSTS", default="127.0.0.1,localhost").split(",")
+    for h in env("ALLOWED_HOSTS", default="127.0.0.1,localhost").split(",")
     if h.strip()
 ]
 
-# For deployments behind a proxy/HTTPS (optional: set USE_X_FORWARDED_PROTO=1 in .env)
-if config("USE_X_FORWARDED_PROTO", default="0") == "1":
+# Trust proxy SSL header if behind nginx / reverse proxy
+if env_bool("USE_X_FORWARDED_PROTO", default=False):
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# CSRF trusted origins for production
 CSRF_TRUSTED_ORIGINS = [
-    o.strip()
-    for o in config("CSRF_TRUSTED_ORIGINS", default="").split(",")
-    if o.strip()
+    o.strip() for o in env("CSRF_TRUSTED_ORIGINS", default="").split(",") if o.strip()
 ]
 
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+
 
 # ---------------------------------------------------------------------
 # Applications
@@ -67,6 +81,10 @@ INSTALLED_APPS = [
 ]
 SITE_ID = 1
 
+
+# ---------------------------------------------------------------------
+# Middleware
+# ---------------------------------------------------------------------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -87,6 +105,7 @@ TEMPLATES = [
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
+                # Required for {{ request.* }} in templates
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
@@ -97,36 +116,58 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "dynasty_blog.wsgi.application"
 
+
 # ---------------------------------------------------------------------
-# Database (PostgreSQL only)
+# Database (PostgreSQL)
 # ---------------------------------------------------------------------
-# Prefer DATABASE_URL if provided (for production/hosting)
-DATABASE_URL = config("DATABASE_URL", default=None)
+# You can control SSL behaviour with:
+# - DB_SSLMODE: disable | require | verify-ca | verify-full
+# - DB_SSL_REQUIRE: 1/0 (used only for DATABASE_URL parsing convenience)
+#
+# IMPORTANT: For local dev, DB_SSLMODE defaults to "disable"
+DB_SSLMODE = env("DB_SSLMODE", default="disable").strip().lower()
+DB_SSL_REQUIRE = env_bool("DB_SSL_REQUIRE", default=False)
+
+DATABASE_URL = env("DATABASE_URL", default="").strip()
 
 if DATABASE_URL:
+    # Parse DATABASE_URL. Many hosted providers want SSL; you control with DB_SSL_REQUIRE and/or DB_SSLMODE.
     DATABASES = {
         "default": dj_database_url.parse(
             DATABASE_URL,
-            conn_max_age=config("DB_CONN_MAX_AGE", cast=int, default=600),
-            ssl_require=config("DB_SSL_REQUIRE", cast=bool, default=False),
+            conn_max_age=env("DB_CONN_MAX_AGE", cast=int, default=600),
+            ssl_require=DB_SSL_REQUIRE,
         )
     }
+
+    # If you want explicit sslmode, add/override OPTIONS
+    # (psycopg3 respects "sslmode")
+    DATABASES["default"].setdefault("OPTIONS", {})
+    DATABASES["default"]["OPTIONS"].update(
+        {
+            "sslmode": DB_SSLMODE,  # ✅ fixes local "SSL required" error when set to disable
+            "connect_timeout": 5,
+        }
+    )
+
 else:
-    # Otherwise build from discrete DB_* env vars
+    # Discrete settings (local/dev or custom)
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": config("DB_NAME", default="blog"),
-            "USER": config("DB_USER", default="blog"),
-            "PASSWORD": config("DB_PASSWORD", default=""),
-            "HOST": config("DB_HOST", default="localhost"),
-            "PORT": config("DB_PORT", default="5432"),
-            "CONN_MAX_AGE": config("DB_CONN_MAX_AGE", cast=int, default=600),
+            "NAME": env("DB_NAME", default="blog"),
+            "USER": env("DB_USER", default="blog"),
+            "PASSWORD": env("DB_PASSWORD", default=""),
+            "HOST": env("DB_HOST", default="localhost"),
+            "PORT": env("DB_PORT", default="5432"),
+            "CONN_MAX_AGE": env("DB_CONN_MAX_AGE", cast=int, default=600),
             "OPTIONS": {
-                "connect_timeout": 5,  # quick fail if PG isn't reachable
+                "connect_timeout": 5,
+                "sslmode": DB_SSLMODE,  # ✅ default "disable" fixes your current error
             },
         }
     }
+
 
 # ---------------------------------------------------------------------
 # Password validation
@@ -140,6 +181,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
+
 # ---------------------------------------------------------------------
 # Internationalization
 # ---------------------------------------------------------------------
@@ -148,47 +190,49 @@ TIME_ZONE = "Europe/London"
 USE_I18N = True
 USE_TZ = True
 
+
 # ---------------------------------------------------------------------
 # Static & media files
 # ---------------------------------------------------------------------
-STATIC_URL = config("STATIC_URL", default="/static/")
-MEDIA_URL = config("MEDIA_URL", default="/media/")
+STATIC_URL = env("STATIC_URL", default="/static/")
+MEDIA_URL = env("MEDIA_URL", default="/media/")
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = [p for p in [BASE_DIR / "static"] if p.exists()]
 MEDIA_ROOT = BASE_DIR / "media"
+
+# Optional extra static directory: BASE_DIR/static (only if it exists)
+STATICFILES_DIRS = [str(p) for p in [BASE_DIR / "static"] if p.exists()]
+
+# WhiteNoise storage (compressed + hashed filenames)
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    },
+}
+
 
 # ---------------------------------------------------------------------
 # Email
 # ---------------------------------------------------------------------
-EMAIL_BACKEND = config(
+EMAIL_BACKEND = env(
     "EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend"
 )
-EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")
-EMAIL_PORT = config("EMAIL_PORT", cast=int, default=587)
-EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool, default=True)
-EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool, default=False)
+EMAIL_HOST = env("EMAIL_HOST", default="smtp.gmail.com")
+EMAIL_PORT = env("EMAIL_PORT", cast=int, default=587)
+EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", default=True)
+EMAIL_USE_SSL = env_bool("EMAIL_USE_SSL", default=False)
 
-EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 
-DEFAULT_FROM_EMAIL = config(
-    "DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER or "webmaster@localhost"
+DEFAULT_FROM_EMAIL = env(
+    "DEFAULT_FROM_EMAIL", default=(EMAIL_HOST_USER or "webmaster@localhost")
 )
-SERVER_EMAIL = config("SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
+SERVER_EMAIL = env("SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
+
 
 # ---------------------------------------------------------------------
 # Misc
 # ---------------------------------------------------------------------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# WhiteNoise static files storage (compressed + hashed filenames)
-STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
-
